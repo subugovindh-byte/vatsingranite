@@ -37,3 +37,7 @@ tmp/
 # PlantUML generated images (optional)
 # *.png
 # *.svg
+
+data/*.db
+data/*.db-wal
+data/*.db-shm
