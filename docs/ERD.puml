@@ -1,0 +1,1488 @@
+@startuml AB_Granite_ERD
+!define table(x) entity x << (T,#FFAAAA) >>
+skinparam linetype ortho
+skinparam roundcorner 5
+
+title AB Granite Quarry ERP - Entity Relationship Diagram (Complete - v1.1)
+
+' ============================================================================
+' LEGEND
+' ============================================================================
+legend top right
+  **Color Coding:**
+  #E6F3FF = Organization & Hierarchy
+  #FFE6E6 = Master Data
+  #E6FFE6 = Operations
+  #FFF9E6 = Sales & Despatch
+  #F0E6FF = Finance & Accounting
+  #FFEEEE = HR & Payroll
+  #E6F9F9 = Compliance & Safety
+  **Key:**  PK = Primary Key, FK = Foreign Key, UK = Unique Key
+end legend
+
+' ============================================================================
+' ORGANIZATION HIERARCHY
+' ============================================================================
+package "Organization Hierarchy" #E6F3FF {
+  
+  entity organizations {
+    * id : SERIAL <<PK>>
+    --
+    * org_code : VARCHAR(20) <<UK>>
+    * org_name : VARCHAR(200)
+    legal_entity_type : VARCHAR(50)
+    pan : VARCHAR(10)
+    gstin : VARCHAR(15)
+    incorporation_date : DATE
+    registered_address : TEXT
+    contact_email : VARCHAR(100)
+    contact_phone : VARCHAR(20)
+    active : BOOLEAN
+    created_at : TIMESTAMP
+    created_by : INT <<FK users>>
+  }
+  
+  entity quarries {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * quarry_code : VARCHAR(20) <<UK>>
+    * quarry_name : VARCHAR(200)
+    quarry_type : VARCHAR(50)
+    mineral_type : VARCHAR(100)
+    address : TEXT
+    village : VARCHAR(100)
+    taluk : VARCHAR(100)
+    district : VARCHAR(100)
+    state : VARCHAR(100)
+    pincode : VARCHAR(10)
+    latitude : DECIMAL(10,8)
+    longitude : DECIMAL(11,8)
+    lease_id : INT <<FK leases>>
+    operational_status : VARCHAR(50)
+    commencement_date : DATE
+    gstin : VARCHAR(15)
+    place_of_supply : VARCHAR(100)
+    dgms_registration_no : VARCHAR(50)
+    ibm_code : VARCHAR(50)
+    active : BOOLEAN
+    created_at : TIMESTAMP
+  }
+  
+  entity cost_centers {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * quarry_id : INT <<FK quarries>>
+    * cost_center_code : VARCHAR(20) <<UK>>
+    * cost_center_name : VARCHAR(200)
+    parent_cost_center_id : INT <<FK cost_centers>>
+    cost_center_type : VARCHAR(50)
+    head_employee_id : INT <<FK employees>>
+    active : BOOLEAN
+  }
+  
+  entity locations {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * quarry_id : INT <<FK quarries>>
+    cost_center_id : INT <<FK cost_centers>>
+    * location_code : VARCHAR(20) <<UK>>
+    * location_name : VARCHAR(200)
+    location_type : VARCHAR(50)
+    parent_location_id : INT <<FK locations>>
+    geo_coordinates : TEXT
+    area_sqm : DECIMAL(12,2)
+    bench_level : VARCHAR(20)
+    bench_height_m : DECIMAL(5,2)
+    bench_width_m : DECIMAL(5,2)
+    slope_angle_deg : DECIMAL(5,2)
+    active : BOOLEAN
+  }
+}
+
+' ============================================================================
+' MASTER DATA
+' ============================================================================
+package "Master Data" #FFE6E6 {
+  
+  entity customers {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * customer_code : VARCHAR(20) <<UK>>
+    * customer_name : VARCHAR(200)
+    customer_type : VARCHAR(50)
+    gstin : VARCHAR(15)
+    pan : VARCHAR(10)
+    phone : VARCHAR(20)
+    email : VARCHAR(100)
+    address : TEXT
+    city : VARCHAR(100)
+    state : VARCHAR(100)
+    pincode : VARCHAR(10)
+    country : VARCHAR(100)
+    credit_limit : DECIMAL(15,2)
+    credit_days : INT
+    payment_terms : VARCHAR(100)
+    active : BOOLEAN
+    created_at : TIMESTAMP
+  }
+  
+  entity suppliers {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * supplier_code : VARCHAR(20) <<UK>>
+    * supplier_name : VARCHAR(200)
+    supplier_type : VARCHAR(50)
+    gstin : VARCHAR(15)
+    pan : VARCHAR(10)
+    msme_registration : VARCHAR(50)
+    phone : VARCHAR(20)
+    email : VARCHAR(100)
+    address : TEXT
+    city : VARCHAR(100)
+    state : VARCHAR(100)
+    pincode : VARCHAR(10)
+    payment_terms : VARCHAR(100)
+    tds_section : VARCHAR(20)
+    active : BOOLEAN
+  }
+  
+  entity employees {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * emp_code : VARCHAR(20) <<UK>>
+    * emp_name : VARCHAR(200)
+    primary_quarry_id : INT <<FK quarries>>
+    department : VARCHAR(100)
+    designation : VARCHAR(100)
+    employment_type : VARCHAR(50)
+    date_of_joining : DATE
+    date_of_exit : DATE
+    uan_no : VARCHAR(20)
+    esi_no : VARCHAR(20)
+    pan : VARCHAR(10)
+    aadhaar_masked : VARCHAR(20)
+    bank_name : VARCHAR(100)
+    bank_account_no : VARCHAR(50)
+    bank_ifsc : VARCHAR(11)
+    basic_salary : DECIMAL(10,2)
+    active : BOOLEAN
+  }
+  
+  entity users {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * username : VARCHAR(50) <<UK>>
+    * password_hash : VARCHAR(255)
+    * full_name : VARCHAR(200)
+    email : VARCHAR(100)
+    phone : VARCHAR(20)
+    emp_id : INT <<FK employees>>
+    active : BOOLEAN
+    last_login : TIMESTAMP
+    created_at : TIMESTAMP
+  }
+  
+  entity roles {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * role_code : VARCHAR(50) <<UK>>
+    * role_name : VARCHAR(200)
+    description : TEXT
+  }
+  
+  entity user_roles {
+    * id : SERIAL <<PK>>
+    --
+    * user_id : INT <<FK users>>
+    * role_id : INT <<FK roles>>
+    quarry_id : INT <<FK quarries>>
+  }
+  
+  entity varieties {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    quarry_id : INT <<FK quarries>>
+    * variety_code : VARCHAR(20) <<UK>>
+    * variety_name : VARCHAR(200)
+    color : VARCHAR(100)
+    grade : VARCHAR(20)
+    category : VARCHAR(50)
+    default_price_per_cbm : DECIMAL(10,2)
+    default_density : DECIMAL(5,3)
+    active : BOOLEAN
+  }
+  
+  entity assets {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * asset_no : VARCHAR(50) <<UK>>
+    * asset_name : VARCHAR(200)
+    asset_category : VARCHAR(100)
+    asset_type : VARCHAR(100)
+    make : VARCHAR(100)
+    model : VARCHAR(100)
+    year_of_manufacture : INT
+    serial_no : VARCHAR(100)
+    registration_no : VARCHAR(50)
+    current_quarry_id : INT <<FK quarries>>
+    current_location_id : INT <<FK locations>>
+    ownership_type : VARCHAR(50)
+    purchase_date : DATE
+    purchase_cost : DECIMAL(15,2)
+    current_book_value : DECIMAL(15,2)
+    depreciation_method : VARCHAR(20)
+    operational_status : VARCHAR(50)
+    hour_meter_reading : INT
+    insurance_expiry_date : DATE
+    fitness_expiry_date : DATE
+    active : BOOLEAN
+  }
+  
+  entity accounts {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * account_code : VARCHAR(20) <<UK>>
+    * account_name : VARCHAR(200)
+    account_type : VARCHAR(50)
+    parent_account_id : INT <<FK accounts>>
+    is_cost_center_required : BOOLEAN
+    is_quarry_required : BOOLEAN
+    active : BOOLEAN
+  }
+}
+
+' ============================================================================
+' OPERATIONS
+' ============================================================================
+package "Operations" #E6FFE6 {
+  
+  entity leases {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * quarry_id : INT <<FK quarries>>
+    * lease_no : VARCHAR(100) <<UK>>
+    mineral : VARCHAR(100)
+    lease_area_ha : DECIMAL(10,4)
+    mineable_area_ha : DECIMAL(10,4)
+    lease_from_date : DATE
+    lease_to_date : DATE
+    annual_permitted_qty_cbm : DECIMAL(15,3)
+    royalty_rate_per_cbm : DECIMAL(10,2)
+    dmf_percent : DECIMAL(5,2)
+    nmet_percent : DECIMAL(5,2)
+    boundary_coordinates : TEXT
+    survey_field_numbers : TEXT
+    gazette_notification_ref : VARCHAR(100)
+    active : BOOLEAN
+  }
+  
+  entity blast_events {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * quarry_id : INT <<FK quarries>>
+    * blast_no : VARCHAR(50) <<UK>>
+    * blast_date : DATE
+    location_id : INT <<FK locations>>
+    holes_drilled : INT
+    hole_depth_m : DECIMAL(5,2)
+    hole_diameter_mm : INT
+    spacing_m : DECIMAL(4,2)
+    burden_m : DECIMAL(4,2)
+    total_drilled_m : DECIMAL(8,2)
+    explosives_consumed_kg : DECIMAL(8,2)
+    detonators_used : INT
+    blaster_id : INT <<FK employees>>
+    blaster_cert_no : VARCHAR(100)
+    estimated_yield_cbm : DECIMAL(10,2)
+    actual_yield_cbm : DECIMAL(10,2)
+    vibration_ppv_mm_s : DECIMAL(5,2)
+    blast_latitude : DECIMAL(10,8)
+    blast_longitude : DECIMAL(11,8)
+    within_lease_boundary : BOOLEAN
+    approved_by : INT <<FK employees>>
+    created_at : TIMESTAMP
+  }
+  
+  entity blocks {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * quarry_id : INT <<FK quarries>>
+    * block_no : VARCHAR(50) <<UK>>
+    variety_id : INT <<FK varieties>>
+    grade : VARCHAR(20)
+    color : VARCHAR(100)
+    extracted_from_location_id : INT <<FK locations>>
+    blast_event_id : INT <<FK blast_events>>
+    extraction_date : DATE
+    length_mm : INT
+    width_mm : INT
+    height_mm : INT
+    gross_cbm : DECIMAL(10,3)
+    net_cbm : DECIMAL(10,3)
+    weight_kg : DECIMAL(10,2)
+    current_location_id : INT <<FK locations>>
+    status : VARCHAR(50)
+    sales_order_id : INT <<FK sales_orders>>
+    invoice_id : INT <<FK invoices>>
+    qr_code : VARCHAR(100) <<UK>>
+    rfid_tag : VARCHAR(100)
+    photo_urls : TEXT
+    cost_per_cbm : DECIMAL(10,2)
+    active : BOOLEAN
+    created_at : TIMESTAMP
+  }
+  
+  entity slabs {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * quarry_id : INT <<FK quarries>>
+    * slab_id : VARCHAR(50) <<UK>>
+    block_id : INT <<FK blocks>>
+    variety_id : INT <<FK varieties>>
+    length_mm : INT
+    width_mm : INT
+    thickness_mm : INT
+    sqm : DECIMAL(8,2)
+    weight_kg : DECIMAL(10,2)
+    status : VARCHAR(50)
+    created_at : TIMESTAMP
+  }
+  
+  entity production_logs {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * quarry_id : INT <<FK quarries>>
+    * production_date : DATE
+    location_id : INT <<FK locations>>
+    shift_type : VARCHAR(20)
+    blocks_produced : INT
+    gross_cbm : DECIMAL(10,3)
+    net_cbm : DECIMAL(10,3)
+    in_charge_emp_id : INT <<FK employees>>
+    surveyor_emp_id : INT <<FK employees>>
+    notes : TEXT
+    created_at : TIMESTAMP
+  }
+  
+  entity maintenance_jobs {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * quarry_id : INT <<FK quarries>>
+    * job_no : VARCHAR(50) <<UK>>
+    asset_id : INT <<FK assets>>
+    job_type : VARCHAR(50)
+    job_date : DATE
+    scheduled_date : DATE
+    symptom : TEXT
+    cause : TEXT
+    action_taken : TEXT
+    downtime_hours : DECIMAL(6,2)
+    cost : DECIMAL(12,2)
+    mechanic_emp_id : INT <<FK employees>>
+    status : VARCHAR(50)
+    created_at : TIMESTAMP
+  }
+  
+  entity explosives_stock {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * quarry_id : INT <<FK quarries>>
+    magazine_location_id : INT <<FK locations>>
+    * item_name : VARCHAR(200)
+    batch_no : VARCHAR(50)
+    opening_stock_kg : DECIMAL(10,2)
+    received_kg : DECIMAL(10,2)
+    issued_kg : DECIMAL(10,2)
+    returned_kg : DECIMAL(10,2)
+    closing_stock_kg : DECIMAL(10,2)
+    stock_date : DATE
+  }
+  
+  entity inventory_items {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * item_code : VARCHAR(50) <<UK>>
+    * item_name : VARCHAR(200)
+    item_category : VARCHAR(100)
+    hsn_code : VARCHAR(10)
+    uom : VARCHAR(20)
+    reorder_level : DECIMAL(10,2)
+    current_stock : DECIMAL(10,2)
+    avg_cost : DECIMAL(10,2)
+    active : BOOLEAN
+  }
+  
+  entity purchase_orders {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * quarry_id : INT <<FK quarries>>
+    * po_no : VARCHAR(50) <<UK>>
+    * po_date : DATE
+    supplier_id : INT <<FK suppliers>>
+    total_value : DECIMAL(15,2)
+    status : VARCHAR(50)
+    created_at : TIMESTAMP
+  }
+}
+
+' ============================================================================
+' SALES & DESPATCH
+' ============================================================================
+package "Sales & Despatch" #FFF9E6 {
+  
+  entity sales_orders {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * so_no : VARCHAR(50) <<UK>>
+    * so_date : DATE
+    customer_id : INT <<FK customers>>
+    source_quarry_id : INT <<FK quarries>>
+    total_value : DECIMAL(15,2)
+    currency : VARCHAR(3)
+    advance_received : DECIMAL(15,2)
+    is_export : BOOLEAN
+    buyer_country : VARCHAR(100)
+    status : VARCHAR(50)
+    created_at : TIMESTAMP
+  }
+  
+  entity sales_order_lines {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * so_id : INT <<FK sales_orders>>
+    * line_no : INT
+    variety_id : INT <<FK varieties>>
+    grade : VARCHAR(20)
+    qty_cbm : DECIMAL(10,3)
+    rate_per_cbm : DECIMAL(10,2)
+    line_value : DECIMAL(15,2)
+    fulfillment_quarry_id : INT <<FK quarries>>
+    dispatched_qty_cbm : DECIMAL(10,3)
+  }
+  
+  entity invoices {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * despatch_quarry_id : INT <<FK quarries>>
+    * invoice_no : VARCHAR(50) <<UK>>
+    * invoice_date : DATE
+    invoice_type : VARCHAR(50)
+    customer_id : INT <<FK customers>>
+    so_id : INT <<FK sales_orders>>
+    place_of_supply : VARCHAR(100)
+    gstin_of_supplier : VARCHAR(15)
+    gstin_of_buyer : VARCHAR(15)
+    taxable_value : DECIMAL(15,2)
+    cgst_amount : DECIMAL(15,2)
+    sgst_amount : DECIMAL(15,2)
+    igst_amount : DECIMAL(15,2)
+    invoice_value : DECIMAL(15,2)
+    irn : VARCHAR(100)
+    ack_no : VARCHAR(50)
+    qr_code : TEXT
+    e_way_bill_no : VARCHAR(20)
+    shipping_bill_no : VARCHAR(50)
+    status : VARCHAR(50)
+    created_at : TIMESTAMP
+  }
+  
+  entity invoice_lines {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * invoice_id : INT <<FK invoices>>
+    * line_no : INT
+    block_id : INT <<FK blocks>>
+    variety_id : INT <<FK varieties>>
+    hsn_code : VARCHAR(10)
+    qty_cbm : DECIMAL(10,3)
+    rate_per_cbm : DECIMAL(10,2)
+    taxable_value : DECIMAL(15,2)
+    gst_rate : DECIMAL(5,2)
+    gst_amount : DECIMAL(15,2)
+    line_total : DECIMAL(15,2)
+  }
+  
+  entity despatch_advices {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * quarry_id : INT <<FK quarries>>
+    * da_no : VARCHAR(50) <<UK>>
+    * da_date : DATE
+    invoice_id : INT <<FK invoices>>
+    vehicle_no : VARCHAR(20)
+    driver_name : VARCHAR(100)
+    driver_licence_no : VARCHAR(50)
+    tare_weight_kg : DECIMAL(10,2)
+    gross_weight_kg : DECIMAL(10,2)
+    net_weight_kg : DECIMAL(10,2)
+    gate_out_time : TIMESTAMP
+    status : VARCHAR(50)
+  }
+  
+  entity e_way_bills {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * ewb_no : VARCHAR(20) <<UK>>
+    invoice_id : INT <<FK invoices>>
+    da_id : INT <<FK despatch_advices>>
+    ewb_date : TIMESTAMP
+    valid_until : TIMESTAMP
+    distance_km : INT
+    vehicle_no : VARCHAR(20)
+    transporter_id : INT <<FK suppliers>>
+    status : VARCHAR(50)
+  }
+  
+  entity vehicles {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * vehicle_no : VARCHAR(20) <<UK>>
+    vehicle_type : VARCHAR(50)
+    make : VARCHAR(100)
+    model : VARCHAR(100)
+    ownership_type : VARCHAR(50)
+    registration_date : DATE
+    fitness_expiry : DATE
+    insurance_expiry : DATE
+    puc_expiry : DATE
+    current_quarry_id : INT <<FK quarries>>
+    active : BOOLEAN
+  }
+  
+  entity drivers {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * driver_code : VARCHAR(20) <<UK>>
+    * driver_name : VARCHAR(200)
+    licence_no : VARCHAR(50)
+    licence_expiry : DATE
+    phone : VARCHAR(20)
+    active : BOOLEAN
+  }
+}
+
+' ============================================================================
+' FINANCE & ACCOUNTING
+' ============================================================================
+package "Finance & Accounting" #F0E6FF {
+  
+  entity vouchers {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * voucher_no : VARCHAR(50) <<UK>>
+    * voucher_type : VARCHAR(50)
+    * voucher_date : DATE
+    fiscal_year : INT
+    fiscal_period : INT
+    reference_no : VARCHAR(100)
+    narration : TEXT
+    default_quarry_id : INT <<FK quarries>>
+    default_cost_center_id : INT <<FK cost_centers>>
+    status : VARCHAR(50)
+    approved_by : INT <<FK employees>>
+    posted_at : TIMESTAMP
+    created_at : TIMESTAMP
+  }
+  
+  entity voucher_lines {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * voucher_id : INT <<FK vouchers>>
+    * line_no : INT
+    * account_id : INT <<FK accounts>>
+    quarry_id : INT <<FK quarries>>
+    cost_center_id : INT <<FK cost_centers>>
+    debit_amount : DECIMAL(15,2)
+    credit_amount : DECIMAL(15,2)
+    currency : VARCHAR(3)
+    exchange_rate : DECIMAL(10,4)
+    party_type : VARCHAR(50)
+    party_id : INT
+    reference_type : VARCHAR(50)
+    reference_id : INT
+  }
+  
+  entity bank_accounts {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    quarry_id : INT <<FK quarries>>
+    * account_no : VARCHAR(50) <<UK>>
+    * bank_name : VARCHAR(200)
+    branch : VARCHAR(200)
+    ifsc_code : VARCHAR(11)
+    account_type : VARCHAR(50)
+    current_balance : DECIMAL(15,2)
+    gl_account_id : INT <<FK accounts>>
+    active : BOOLEAN
+  }
+  
+  entity loans {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * loan_no : VARCHAR(50) <<UK>>
+    loan_type : VARCHAR(100)
+    bank_id : INT <<FK bank_accounts>>
+    sanction_amount : DECIMAL(15,2)
+    disbursement_date : DATE
+    interest_rate : DECIMAL(5,2)
+    tenure_months : INT
+    emi_amount : DECIMAL(15,2)
+    outstanding_balance : DECIMAL(15,2)
+    status : VARCHAR(50)
+  }
+  
+  entity royalty_challans {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * quarry_id : INT <<FK quarries>>
+    * challan_no : VARCHAR(50) <<UK>>
+    period_month : INT
+    period_year : INT
+    opening_stock_cbm : DECIMAL(15,3)
+    produced_cbm : DECIMAL(15,3)
+    despatched_cbm : DECIMAL(15,3)
+    closing_stock_cbm : DECIMAL(15,3)
+    royalty_rate_per_cbm : DECIMAL(10,2)
+    royalty_amount : DECIMAL(15,2)
+    dmf_amount : DECIMAL(15,2)
+    nmet_amount : DECIMAL(15,2)
+    total_amount : DECIMAL(15,2)
+    payment_date : DATE
+    voucher_id : INT <<FK vouchers>>
+    reconciled : BOOLEAN
+  }
+  
+  entity gst_returns {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * return_type : VARCHAR(20)
+    * period_month : INT
+    * period_year : INT
+    filing_date : DATE
+    arn : VARCHAR(50)
+    taxable_value : DECIMAL(15,2)
+    cgst : DECIMAL(15,2)
+    sgst : DECIMAL(15,2)
+    igst : DECIMAL(15,2)
+    itc_claimed : DECIMAL(15,2)
+    net_tax_payable : DECIMAL(15,2)
+    status : VARCHAR(50)
+  }
+  
+  entity tds_deductions {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * voucher_id : INT <<FK vouchers>>
+    deductee_type : VARCHAR(50)
+    deductee_id : INT
+    deductee_pan : VARCHAR(10)
+    tds_section : VARCHAR(10)
+    payment_amount : DECIMAL(15,2)
+    tds_rate : DECIMAL(5,2)
+    tds_amount : DECIMAL(15,2)
+    deduction_date : DATE
+    quarter : INT
+    financial_year : INT
+  }
+}
+
+' ============================================================================
+' HR & PAYROLL
+' ============================================================================
+package "HR & Payroll" #FFEEEE {
+  
+  entity attendance {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * quarry_id : INT <<FK quarries>>
+    * emp_id : INT <<FK employees>>
+    * attendance_date : DATE
+    shift_type : VARCHAR(20)
+    in_time : TIME
+    out_time : TIME
+    hours_worked : DECIMAL(4,2)
+    ot_hours : DECIMAL(4,2)
+    status : VARCHAR(20)
+  }
+  
+  entity payroll_runs {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * pay_period_month : INT
+    * pay_period_year : INT
+    run_date : DATE
+    payment_date : DATE
+    total_gross : DECIMAL(15,2)
+    total_deductions : DECIMAL(15,2)
+    total_net : DECIMAL(15,2)
+    status : VARCHAR(50)
+    approved_by : INT <<FK employees>>
+  }
+  
+  entity payroll_details {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * payroll_run_id : INT <<FK payroll_runs>>
+    * emp_id : INT <<FK employees>>
+    days_worked : DECIMAL(5,2)
+    basic_pay : DECIMAL(10,2)
+    da : DECIMAL(10,2)
+    hra : DECIMAL(10,2)
+    other_allowances : DECIMAL(10,2)
+    gross_pay : DECIMAL(10,2)
+    epf_employee : DECIMAL(10,2)
+    epf_employer : DECIMAL(10,2)
+    esi_employee : DECIMAL(10,2)
+    esi_employer : DECIMAL(10,2)
+    professional_tax : DECIMAL(10,2)
+    tds : DECIMAL(10,2)
+    other_deductions : DECIMAL(10,2)
+    total_deductions : DECIMAL(10,2)
+    net_pay : DECIMAL(10,2)
+  }
+  
+  entity leave_records {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * emp_id : INT <<FK employees>>
+    leave_type : VARCHAR(50)
+    from_date : DATE
+    to_date : DATE
+    no_of_days : DECIMAL(4,1)
+    reason : TEXT
+    approved_by : INT <<FK employees>>
+    status : VARCHAR(50)
+  }
+  
+  entity employee_certificates {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * emp_id : INT <<FK employees>>
+    certificate_type : VARCHAR(100)
+    certificate_no : VARCHAR(100)
+    issue_date : DATE
+    expiry_date : DATE
+    issuing_authority : VARCHAR(200)
+    document_url : TEXT
+    active : BOOLEAN
+  }
+}
+
+' ============================================================================
+' COMPLIANCE & SAFETY
+' ============================================================================
+package "Compliance & Safety" #E6F9F9 {
+  
+  entity permits {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * quarry_id : INT <<FK quarries>>
+    * permit_no : VARCHAR(50) <<UK>>
+    permit_type : VARCHAR(100)
+    permit_name : VARCHAR(200)
+    issued_by : VARCHAR(200)
+    issue_date : DATE
+    expiry_date : DATE
+    renewal_date : DATE
+    status : VARCHAR(50)
+    document_url : TEXT
+  }
+  
+  entity mineral_despatch_permits {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * quarry_id : INT <<FK quarries>>
+    * permit_no : VARCHAR(50) <<UK>>
+    * permit_date : DATE
+    da_id : INT <<FK despatch_advices>>
+    invoice_id : INT <<FK invoices>>
+    mineral : VARCHAR(100)
+    qty_cbm : DECIMAL(10,3)
+    destination_address : TEXT
+    vehicle_no : VARCHAR(20)
+    valid_from_date : DATE
+    valid_to_date : DATE
+    portal_reference_no : VARCHAR(100)
+    portal_status : VARCHAR(50)
+    used_date : DATE
+  }
+  
+  entity safety_incidents {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * quarry_id : INT <<FK quarries>>
+    * incident_no : VARCHAR(50) <<UK>>
+    * incident_date : TIMESTAMP
+    incident_type : VARCHAR(100)
+    severity : VARCHAR(50)
+    location_id : INT <<FK locations>>
+    person_affected_emp_id : INT <<FK employees>>
+    description : TEXT
+    immediate_action : TEXT
+    root_cause : TEXT
+    corrective_action : TEXT
+    preventive_action : TEXT
+    reported_to_dgms : BOOLEAN
+    reported_at : TIMESTAMP
+    status : VARCHAR(50)
+  }
+  
+  entity inspections {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * quarry_id : INT <<FK quarries>>
+    * inspection_no : VARCHAR(50) <<UK>>
+    * inspection_date : DATE
+    inspection_type : VARCHAR(100)
+    location_id : INT <<FK locations>>
+    inspector_emp_id : INT <<FK employees>>
+    checklist_json : TEXT
+    observations : TEXT
+    non_conformances : INT
+    status : VARCHAR(50)
+    next_inspection_date : DATE
+  }
+  
+  entity statutory_returns {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    quarry_id : INT <<FK quarries>>
+    * return_type : VARCHAR(100)
+    * return_code : VARCHAR(50)
+    period_month : INT
+    period_year : INT
+    due_date : DATE
+    submission_date : DATE
+    acknowledgement_no : VARCHAR(100)
+    status : VARCHAR(50)
+    document_url : TEXT
+  }
+  
+  entity environmental_readings {
+    * id : SERIAL <<PK>>
+    --
+    * org_id : INT <<FK organizations>>
+    * quarry_id : INT <<FK quarries>>
+    * reading_date : DATE
+    reading_type : VARCHAR(50)
+    location_id : INT <<FK locations>>
+    parameter : VARCHAR(100)
+    value : DECIMAL(10,4)
+    unit : VARCHAR(20)
+    standard_limit : DECIMAL(10,4)
+    compliant : BOOLEAN
+  }
+}
+
+' ============================================================================
+' RELATIONSHIPS - ORGANIZATION HIERARCHY
+' ============================================================================
+organizations ||--o{ quarries : "has"
+organizations ||--o{ cost_centers : "has"
+quarries ||--o{ cost_centers : "has"
+quarries ||--o{ locations : "has"
+cost_centers ||--o{ locations : "has"
+cost_centers ||--o{ cost_centers : "parent of"
+locations ||--o{ locations : "parent of"
+
+' ============================================================================
+' RELATIONSHIPS - MASTER DATA
+' ============================================================================
+organizations ||--o{ customers : "has"
+organizations ||--o{ suppliers : "has"
+organizations ||--o{ employees : "has"
+organizations ||--o{ users : "has"
+organizations ||--o{ roles : "has"
+organizations ||--o{ varieties : "has"
+organizations ||--o{ assets : "has"
+organizations ||--o{ accounts : "has"
+quarries ||--o{ employees : "primary location"
+quarries ||--o{ varieties : "available at"
+quarries ||--o{ assets : "currently at"
+employees ||--o{ users : "is"
+users ||--o{ user_roles : "has"
+roles ||--o{ user_roles : "assigned to"
+accounts ||--o{ accounts : "parent of"
+
+' ============================================================================
+' RELATIONSHIPS - OPERATIONS
+' ============================================================================
+quarries ||--o{ leases : "has"
+quarries ||--o{ blast_events : "occurs at"
+quarries ||--o{ blocks : "extracted from"
+quarries ||--o{ production_logs : "records"
+quarries ||--o{ maintenance_jobs : "performed at"
+locations ||--o{ blast_events : "blast location"
+locations ||--o{ blocks : "extracted from"
+locations ||--o{ blocks : "currently at"
+blast_events ||--o{ blocks : "produces"
+blocks ||--o{ slabs : "cut into"
+employees ||--o{ blast_events : "blaster"
+employees ||--o{ production_logs : "in-charge"
+assets ||--o{ maintenance_jobs : "maintained"
+suppliers ||--o{ purchase_orders : "supplies"
+varieties ||--o{ blocks : "type"
+
+' ============================================================================
+' RELATIONSHIPS - SALES & DESPATCH
+' ============================================================================
+customers ||--o{ sales_orders : "places"
+quarries ||--o{ sales_orders : "fulfilled from"
+sales_orders ||--o{ sales_order_lines : "contains"
+sales_orders ||--o{ invoices : "invoiced"
+sales_orders ||--o{ blocks : "reserves"
+quarries ||--o{ invoices : "despatched from"
+invoices ||--o{ invoice_lines : "contains"
+blocks ||--o{ invoice_lines : "sold as"
+invoices ||--o{ despatch_advices : "despatched via"
+invoices ||--o{ e_way_bills : "generated for"
+despatch_advices ||--o{ e_way_bills : "generated for"
+vehicles ||--o{ despatch_advices : "used for"
+drivers ||--o{ despatch_advices : "drives"
+
+' ============================================================================
+' RELATIONSHIPS - FINANCE
+' ============================================================================
+quarries ||--o{ vouchers : "default quarry"
+vouchers ||--o{ voucher_lines : "contains"
+accounts ||--o{ voucher_lines : "posted to"
+quarries ||--o{ voucher_lines : "allocated to"
+cost_centers ||--o{ voucher_lines : "allocated to"
+bank_accounts ||--o{ loans : "sanctioned by"
+quarries ||--o{ royalty_challans : "paid by"
+vouchers ||--o{ royalty_challans : "payment voucher"
+vouchers ||--o{ tds_deductions : "deducted in"
+
+' ============================================================================
+' RELATIONSHIPS - HR & PAYROLL
+' ============================================================================
+quarries ||--o{ attendance : "recorded at"
+employees ||--o{ attendance : "attends"
+payroll_runs ||--o{ payroll_details : "contains"
+employees ||--o{ payroll_details : "receives"
+employees ||--o{ leave_records : "applies"
+employees ||--o{ employee_certificates : "holds"
+
+' ============================================================================
+' RELATIONSHIPS - COMPLIANCE
+' ============================================================================
+quarries ||--o{ permits : "holds"
+quarries ||--o{ mineral_despatch_permits : "issues"
+quarries ||--o{ safety_incidents : "reports"
+quarries ||--o{ inspections : "inspected"
+quarries ||--o{ statutory_returns : "files"
+quarries ||--o{ environmental_readings : "monitors"
+locations ||--o{ safety_incidents : "occurs at"
+locations ||--o{ inspections : "inspected at"
+employees ||--o{ safety_incidents : "affected"
+employees ||--o{ inspections : "conducts"
+despatch_advices ||--o{ mineral_despatch_permits : "requires"
+invoices ||--o{ mineral_despatch_permits : "requires"
+
+@enduml
+!define table(x) entity x << (T,#FFAAAA) >>
+skinparam linetype ortho
+skinparam roundcorner 10
+
+title AB Granite ERP - Entity Relationship Diagram
+
+package "Master Data" #DDDDDD {
+  entity varieties {
+    * id : INTEGER <<PK>>
+    --
+    * name : TEXT <<UK>>
+    category : TEXT
+    color : TEXT
+    origin : TEXT
+    description : TEXT
+    active : INTEGER
+    created_at : TEXT
+    created_by : TEXT
+  }
+
+  entity customers {
+    * id : INTEGER <<PK>>
+    --
+    * name : TEXT
+    gstin : TEXT <<UK>>
+    pan : TEXT
+    * phone : TEXT
+    email : TEXT
+    address : TEXT
+    city : TEXT
+    state : TEXT
+    pincode : TEXT
+    credit_limit : INTEGER
+    credit_days : INTEGER
+    active : INTEGER
+    created_at : TEXT
+    created_by : TEXT
+  }
+
+  entity suppliers {
+    * id : INTEGER <<PK>>
+    --
+    * name : TEXT
+    gstin : TEXT <<UK>>
+    pan : TEXT
+    * phone : TEXT
+    email : TEXT
+    address : TEXT
+    city : TEXT
+    state : TEXT
+    pincode : TEXT
+    payment_terms : TEXT
+    active : INTEGER
+    created_at : TEXT
+    created_by : TEXT
+  }
+
+  entity users {
+    * id : INTEGER <<PK>>
+    --
+    * username : TEXT <<UK>>
+    * password_hash : TEXT
+    * full_name : TEXT
+    email : TEXT
+    * role : TEXT
+    active : INTEGER
+    last_login : TEXT
+    created_at : TEXT
+    created_by : TEXT
+  }
+}
+
+package "Inventory" #E6F3FF {
+  entity blocks {
+    * id : INTEGER <<PK>>
+    --
+    * block_id : TEXT <<UK>>
+    * variety_id : INTEGER <<FK>>
+    po_id : INTEGER <<FK>>
+    * length_mm : INTEGER
+    * width_mm : INTEGER
+    * height_mm : INTEGER
+    cbm : REAL <<calc>>
+    weight_kg : REAL
+    location : TEXT
+    purchase_rate : INTEGER
+    * status : TEXT
+    notes : TEXT
+    created_at : TEXT
+    created_by : TEXT
+  }
+
+  entity slabs {
+    * id : INTEGER <<PK>>
+    --
+    * slab_id : TEXT <<UK>>
+    block_id : INTEGER <<FK>>
+    * variety_id : INTEGER <<FK>>
+    * length_mm : INTEGER
+    * width_mm : INTEGER
+    * thickness_mm : INTEGER
+    sqft : REAL <<calc>>
+    sqm : REAL <<calc>>
+    location : TEXT
+    grade : TEXT
+    finish : TEXT
+    * status : TEXT
+    notes : TEXT
+    created_at : TEXT
+    created_by : TEXT
+  }
+}
+
+package "Purchase" #FFE6E6 {
+  entity purchase_orders {
+    * id : INTEGER <<PK>>
+    --
+    * po_id : TEXT <<UK>>
+    * date : TEXT
+    * supplier_id : INTEGER <<FK>>
+    * variety_id : INTEGER <<FK>>
+    quantity_cbm : REAL
+    rate_per_cbm : INTEGER
+    transport_charges : INTEGER
+    taxable_amount : INTEGER
+    cgst_paise : INTEGER
+    sgst_paise : INTEGER
+    igst_paise : INTEGER
+    total_paise : INTEGER
+    * status : TEXT
+    * payment_status : TEXT
+    notes : TEXT
+    created_at : TEXT
+    created_by : TEXT
+  }
+
+  entity po_payments {
+    * id : INTEGER <<PK>>
+    --
+    * po_id : INTEGER <<FK>>
+    * payment_date : TEXT
+    * amount_paise : INTEGER
+    * mode : TEXT
+    ref_no : TEXT
+    notes : TEXT
+    created_at : TEXT
+    created_by : TEXT
+  }
+}
+
+package "Sales" #E6FFE6 {
+  entity quotations {
+    * id : INTEGER <<PK>>
+    --
+    * quotation_no : TEXT <<UK>>
+    * date : TEXT
+    * customer_id : INTEGER <<FK>>
+    valid_until : TEXT
+    total_paise : INTEGER
+    * status : TEXT
+    notes : TEXT
+    created_at : TEXT
+    created_by : TEXT
+  }
+
+  entity quotation_lines {
+    * id : INTEGER <<PK>>
+    --
+    * quotation_id : INTEGER <<FK>>
+    * variety_id : INTEGER <<FK>>
+    description : TEXT
+    quantity_sqft : REAL
+    rate_per_sqft : INTEGER
+    amount_paise : INTEGER
+    line_no : INTEGER
+  }
+
+  entity invoices {
+    * id : INTEGER <<PK>>
+    --
+    * invoice_no : TEXT <<UK>>
+    * date : TEXT
+    * customer_id : INTEGER <<FK>>
+    quotation_id : INTEGER <<FK>>
+    place_of_supply : TEXT
+    * taxable_paise : INTEGER
+    cgst_paise : INTEGER
+    sgst_paise : INTEGER
+    igst_paise : INTEGER
+    round_off_paise : INTEGER
+    * total_paise : INTEGER
+    * payment_status : TEXT
+    irn : TEXT <<UK>>
+    ack_no : TEXT
+    ack_date : TEXT
+    qr_code : TEXT
+    e_invoice_status : TEXT
+    notes : TEXT
+    created_at : TEXT
+    created_by : TEXT
+  }
+
+  entity invoice_lines {
+    * id : INTEGER <<PK>>
+    --
+    * invoice_id : INTEGER <<FK>>
+    slab_id : INTEGER <<FK>>
+    * variety_id : INTEGER <<FK>>
+    description : TEXT
+    sqft : REAL
+    rate_per_sqft : INTEGER
+    amount_paise : INTEGER
+    hsn_code : TEXT
+    line_no : INTEGER
+  }
+
+  entity payments {
+    * id : INTEGER <<PK>>
+    --
+    * invoice_id : INTEGER <<FK>>
+    * payment_date : TEXT
+    * amount_paise : INTEGER
+    * mode : TEXT
+    ref_no : TEXT
+    bank_account : TEXT
+    notes : TEXT
+    created_at : TEXT
+    created_by : TEXT
+  }
+}
+
+package "Processing" #FFF9E6 {
+  entity cutting_jobs {
+    * id : INTEGER <<PK>>
+    --
+    * job_no : TEXT <<UK>>
+    * date : TEXT
+    * block_id : INTEGER <<FK>>
+    expected_slabs : INTEGER
+    actual_slabs : INTEGER
+    wastage_cbm : REAL
+    * status : TEXT
+    notes : TEXT
+    created_at : TEXT
+    created_by : TEXT
+  }
+
+  entity job_work_orders {
+    * id : INTEGER <<PK>>
+    --
+    * jw_no : TEXT <<UK>>
+    * date : TEXT
+    * vendor_id : INTEGER <<FK>>
+    * work_type : TEXT
+    total_sqft : REAL
+    rate_per_sqft : INTEGER
+    total_paise : INTEGER
+    * status : TEXT
+    notes : TEXT
+    created_at : TEXT
+    created_by : TEXT
+  }
+
+  entity jw_items {
+    * id : INTEGER <<PK>>
+    --
+    * jw_id : INTEGER <<FK>>
+    * slab_id : INTEGER <<FK>>
+    sent_date : TEXT
+    received_date : TEXT
+    status : TEXT
+  }
+}
+
+package "Accounting" #F0E6FF {
+  entity account_groups {
+    * id : INTEGER <<PK>>
+    --
+    * name : TEXT <<UK>>
+    parent_id : INTEGER <<FK>>
+    * type : TEXT
+    level : INTEGER
+    active : INTEGER
+  }
+
+  entity accounts {
+    * id : INTEGER <<PK>>
+    --
+    * code : TEXT <<UK>>
+    * name : TEXT
+    * group_id : INTEGER <<FK>>
+    opening_balance : INTEGER
+    opening_date : TEXT
+    active : INTEGER
+    created_at : TEXT
+    created_by : TEXT
+  }
+
+  entity journal_vouchers {
+    * id : INTEGER <<PK>>
+    --
+    * voucher_no : TEXT <<UK>>
+    * date : TEXT
+    * voucher_type : TEXT
+    ref_type : TEXT
+    ref_id : INTEGER
+    narration : TEXT
+    * status : TEXT
+    created_at : TEXT
+    created_by : TEXT
+  }
+
+  entity journal_voucher_lines {
+    * id : INTEGER <<PK>>
+    --
+    * jv_id : INTEGER <<FK>>
+    * account_id : INTEGER <<FK>>
+    debit_paise : INTEGER
+    credit_paise : INTEGER
+    line_no : INTEGER
+  }
+
+  entity bank_accounts {
+    * id : INTEGER <<PK>>
+    --
+    * account_name : TEXT <<UK>>
+    * bank_name : TEXT
+    branch : TEXT
+    * account_no : TEXT
+    ifsc : TEXT
+    * account_type : TEXT
+    opening_balance : INTEGER
+    active : INTEGER
+    created_at : TEXT
+    created_by : TEXT
+  }
+
+  entity bank_transactions {
+    * id : INTEGER <<PK>>
+    --
+    * account_id : INTEGER <<FK>>
+    * date : TEXT
+    description : TEXT
+    debit_paise : INTEGER
+    credit_paise : INTEGER
+    balance_paise : INTEGER
+    ref_no : TEXT
+    reconciled : INTEGER
+    jv_id : INTEGER <<FK>>
+    created_at : TEXT
+    created_by : TEXT
+  }
+}
+
+package "GST" #FFE6F0 {
+  entity gst_returns {
+    * id : INTEGER <<PK>>
+    --
+    * return_type : TEXT
+    * period : TEXT
+    filing_date : TEXT
+    arn : TEXT
+    * status : TEXT
+    created_at : TEXT
+    created_by : TEXT
+  }
+
+  entity hsn_summary {
+    * id : INTEGER <<PK>>
+    --
+    * return_id : INTEGER <<FK>>
+    * hsn_code : TEXT
+    description : TEXT
+    uqc : TEXT
+    quantity : REAL
+    taxable_value : INTEGER
+    cgst_paise : INTEGER
+    sgst_paise : INTEGER
+    igst_paise : INTEGER
+    total_tax_paise : INTEGER
+  }
+}
+
+' Relationships
+varieties ||--o{ blocks
+varieties ||--o{ slabs
+varieties ||--o{ purchase_orders
+varieties ||--o{ quotation_lines
+varieties ||--o{ invoice_lines
+
+customers ||--o{ quotations
+customers ||--o{ invoices
+
+suppliers ||--o{ purchase_orders
+suppliers ||--o{ job_work_orders
+
+blocks ||--o{ slabs
+blocks ||--o{ cutting_jobs
+purchase_orders ||--o{ blocks
+purchase_orders ||--o{ po_payments
+
+quotations ||--o{ quotation_lines
+quotations ||--o| invoices
+invoices ||--o{ invoice_lines
+invoices ||--o{ payments
+slabs ||--o{ invoice_lines
+
+job_work_orders ||--o{ jw_items
+slabs ||--o{ jw_items
+
+account_groups ||--o{ account_groups
+account_groups ||--o{ accounts
+accounts ||--o{ journal_voucher_lines
+journal_vouchers ||--|{ journal_voucher_lines
+bank_accounts ||--o{ bank_transactions
+journal_vouchers ||--o{ bank_transactions
+
+gst_returns ||--o{ hsn_summary
+
+note right of blocks
+  **Calculated:**
+  cbm = (L×W×H) / 1B
+  
+  **Status:**
+  available | processing | sold
+end note
+
+note right of slabs
+  **Calculated:**
+  sqft = (L×W) / 92903.04
+  sqm = (L×W) / 1M
+  
+  **Status:**
+  available | reserved | sold
+end note
+
+note right of invoices
+  **GST Logic:**
+  Intra-state: CGST+SGST
+  Inter-state: IGST
+  
+  **E-Invoice:**
+  IRN for B2B > ₹5L
+end note
+
+legend right
+  **Key:**
+  PK = Primary Key
+  FK = Foreign Key
+  UK = Unique Key
+  calc = Calculated
+  
+  **Currency:**
+  All amounts in paise
+  (1 ₹ = 100 paise)
+  
+  **Version:** 1.0
+  **Date:** 2026-05-23
+end legend
+
+@enduml

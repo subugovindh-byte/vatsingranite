@@ -1,0 +1,39 @@
+# Operating System Files
+.DS_Store
+Thumbs.db
+*~
+
+# IDE Files
+.vscode/
+.idea/
+*.swp
+
+# Node modules (if applicable)
+node_modules/
+
+# Python (if applicable)
+__pycache__/
+*.pyc
+venv/
+env/
+
+# Logs
+*.log
+logs/
+
+# Environment Variables
+.env
+.env.local
+
+# Build outputs
+dist/
+build/
+
+# Temporary files
+*.tmp
+*.bak
+tmp/
+
+# PlantUML generated images (optional)
+# *.png
+# *.svg

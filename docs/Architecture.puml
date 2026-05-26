@@ -1,0 +1,506 @@
+@startuml AB_Granite_Architecture
+!theme plain
+skinparam componentStyle rectangle
+skinparam linetype ortho
+
+title AB Granite Quarry ERP - Multi-Site System Architecture (v1.1)
+
+' ============================================================================
+' PRESENTATION LAYER
+' ============================================================================
+package "Presentation Layer" #E6F3FF {
+  
+  package "Web Application (React SPA)" {
+    component [Operations Dashboard] as webops
+    component [Sales & Despatch] as websales
+    component [Accounts & Finance] as webfin
+    component [Compliance & Reports] as webcomp
+    component [Admin & Settings] as webadmin
+  }
+  
+  package "Mobile App (React Native / PWA)" {
+    component [Production Capture] as mobprod
+    component [Attendance & Fuel] as mobatt
+    component [Safety Inspection] as mobsafe
+    component [Weighbridge Kiosk] as mobweigh
+  }
+  
+  package "Customer Portal (B2B)" {
+    component [Order Tracking] as custorder
+    component [Document Downloads] as custdoc
+    component [Payment Gateway] as custpay
+  }
+}
+
+' ============================================================================
+' API GATEWAY & ORCHESTRATION
+' ============================================================================
+package "API Layer" #FFE6E6 {
+  
+  component [API Gateway] as apigw #Gold {
+    Rate Limiting
+    Authentication
+    Request Routing
+    Load Balancing
+  }
+  
+  package "Application Services (Node.js / NestJS)" {
+    
+    component [Auth Service] as authsvc
+    component [Operations API] as opsapi {
+      M1: Production
+      M2: Blasting
+      M3: Blocks & Stockyard
+      M23: Mine Planning
+    }
+    component [Assets & Maintenance API] as assetapi {
+      M4: Equipment
+      M5: Maintenance
+      M6: Procurement
+    }
+    component [Sales API] as salesapi {
+      M7: Domestic Sales
+      M8: Export Sales
+      M9: Weighbridge
+      M10: E-Way/E-Invoice
+    }
+    component [Finance API] as finapi {
+      M11: General Ledger
+      M12: GST/TDS/Tax
+      M13: Banking & Treasury
+      M13A: Financial Package
+    }
+    component [HR & Payroll API] as hrapi {
+      M14: Payroll
+      M16: Labour Compliance
+      M27: Occupational Health
+    }
+    component [Compliance API] as compapi {
+      M15: Mining Statutory
+      M17: Environment
+      M18: Safety
+      M19: Permits & MDP
+    }
+    component [Analytics & MIS API] as misapi {
+      M21: Dashboards
+      M24: Quality Lab
+      M29: Sustainability
+    }
+    component [Platform API] as platapi {
+      M20: Document Mgmt
+      M25: Logistics & GPS
+      M26: Gate Management
+      M28: Customer Portal
+      M30: Platform Ops
+    }
+  }
+  
+  component [Workflow Engine] as workflow #LightBlue {
+    Approval Flows
+    Task Management
+    Notifications
+  }
+}
+
+' ============================================================================
+' INTEGRATION LAYER
+' ============================================================================
+package "Integration Layer" #FFDDDD {
+  
+  component [Integration Hub] as inthub #Orange {
+    Message Queue
+    Event Bus
+    Dead Letter Queue
+  }
+  
+  component [E-Way Bill Connector] as ewaygw
+  component [E-Invoice Connector] as einvgw
+  component [GST Portal Connector] as gstgw
+  component [Banking Connector] as bankgw
+  component [TN Mining Portal Connector] as tngw
+  component [IBM/DGMS Connector] as ibmgw
+  component [EPFO/ESIC Connector] as laborgw
+  component [Weighbridge Interface] as wbif
+  component [Biometric Integration] as biometric
+  component [GPS/Telematics] as gpsif
+  component [WhatsApp Business API] as whatsapp
+}
+
+' ============================================================================
+' DATA LAYER
+' ============================================================================
+package "Data Layer" #E6FFE6 {
+  
+  database "Primary Database\n(PostgreSQL)" as pgdb {
+    folder "Organization Hierarchy" {
+      [organizations]
+      [quarries]
+      [cost_centers]
+      [locations]
+    }
+    folder "Master Data" {
+      [customers]
+      [suppliers]
+      [employees]
+      [accounts (COA)]
+      [varieties]
+      [assets]
+    }
+    folder "Operations" {
+      [leases]
+      [benches]
+      [blocks]
+      [blast_events]
+      [production_logs]
+      [stockyard]
+    }
+    folder "Sales & Despatch" {
+      [sales_orders]
+      [invoices]
+      [despatch_advices]
+      [e_way_bills]
+      [shipping_bills]
+    }
+    folder "Finance" {
+      [vouchers]
+      [voucher_lines]
+      [bank_accounts]
+      [loans]
+      [royalty_challans]
+    }
+    folder "HR & Payroll" {
+      [attendance]
+      [payroll_runs]
+      [leave_records]
+      [statutory_deductions]
+    }
+    folder "Compliance" {
+      [permits]
+      [mdp_register]
+      [safety_incidents]
+      [inspections]
+      [statutory_returns]
+    }
+  }
+  
+  database "Document Store\n(MinIO / S3)" as docstore {
+    folder "Documents" {
+      [Lease Deeds]
+      [Permits & Licences]
+      [Invoices & Bills]
+      [Statutory Returns]
+      [Photos & Videos]
+      [Audit Vault (WORM)]
+    }
+  }
+  
+  database "Analytics DB\n(ClickHouse / TimescaleDB)" as analyticsdb {
+    folder "Aggregates" {
+      [Production Metrics]
+      [Financial KPIs]
+      [Equipment Utilization]
+      [Compliance Status]
+    }
+  }
+  
+  database "Cache Layer\n(Redis)" as cache {
+    folder "Cached Data" {
+      [User Sessions]
+      [Rate Masters]
+      [Quarry Metadata]
+      [API Responses]
+    }
+  }
+  
+  component [ETL Pipeline] as etl
+  component [Backup Service] as backup #LightGreen {
+    Daily Incremental
+    Weekly Full
+    Off-site Encrypted
+    DR Replication
+  }
+}
+
+' ============================================================================
+' SECURITY & IDENTITY
+' ============================================================================
+package "Security Layer" #FFFFCC {
+  component [Identity Provider\n(Keycloak / Azure AD)] as idp
+  component [MFA Service] as mfa
+  component [Secret Vault\n(HashiCorp Vault)] as vault
+  component [Audit Logger] as auditlog
+  component [Encryption Service] as encrypt {
+    TLS 1.3
+    AES-256 at rest
+  }
+}
+
+' ============================================================================
+' EXTERNAL SYSTEMS
+' ============================================================================
+cloud "Government Portals" {
+  [NIC E-Way Bill Portal] as niceway
+  [NIC IRP (E-Invoice)] as nicirp
+  [GSTN (GSP/ASP)] as gstn
+  [TN Mining Dept Portal] as tnmining
+  [IBM Online (MCDR)] as ibm
+  [DGMS Portal] as dgms
+  [EPFO Portal] as epfo
+  [ESIC Portal] as esic
+  [ICEGATE (Customs)] as icegate
+  [DGFT Portal] as dgft
+}
+
+cloud "Banking & Payment" {
+  [HDFC Bank API] as hdfc
+  [ICICI Bank API] as icici
+  [Other Banks (SFTP)] as banks
+  [AD-Code Bank (Export)] as adbank
+  [Payment Gateways] as paygate
+}
+
+cloud "Communication Services" {
+  [Email (SMTP)] as email
+  [SMS Gateway] as sms
+  [WhatsApp Business] as wa
+}
+
+cloud "Third-Party Services" {
+  [Google Maps API] as maps
+  [Surveyor / Drone Service] as drone
+  [Weather API] as weather
+  [GPS Tracking Service] as gpssvc
+}
+
+' ============================================================================
+' INFRASTRUCTURE
+' ============================================================================
+package "Infrastructure (Cloud - AWS Mumbai / Azure Pune)" #DDDDDD {
+  component [Kubernetes Cluster] as k8s {
+    Auto-scaling
+    Load Balancing
+    Health Checks
+  }
+  component [Monitoring\n(Prometheus/Grafana)] as monitor
+  component [Log Aggregation\n(ELK Stack)] as logs
+  component [CI/CD Pipeline\n(GitLab CI)] as cicd
+  component [DR Site\n(Secondary Region)] as dr
+}
+
+' ============================================================================
+' LOCAL QUARRY INFRASTRUCTURE
+' ============================================================================
+package "On-Premise (Quarry Sites)" #F0F0F0 {
+  component [Local Cache Server] as localcache {
+    Offline Capability
+    Sync on Connectivity
+  }
+  component [Weighbridge Device] as wbdevice
+  component [Biometric Device] as biodevice
+  component [IP Cameras (CCTV)] as cctv
+  component [Rugged Tablets] as tablets
+}
+
+' ============================================================================
+' CONNECTIONS - PRESENTATION TO API
+' ============================================================================
+webops --> apigw : HTTPS
+websales --> apigw : HTTPS
+webfin --> apigw : HTTPS
+webcomp --> apigw : HTTPS
+webadmin --> apigw : HTTPS
+mobprod --> apigw : HTTPS (sync)
+mobatt --> apigw : HTTPS (sync)
+mobsafe --> apigw : HTTPS (sync)
+mobweigh --> apigw : HTTPS (sync)
+custorder --> apigw : HTTPS
+custdoc --> apigw : HTTPS
+custpay --> apigw : HTTPS
+
+' ============================================================================
+' CONNECTIONS - API GATEWAY TO SERVICES
+' ============================================================================
+apigw --> authsvc
+apigw --> opsapi
+apigw --> assetapi
+apigw --> salesapi
+apigw --> finapi
+apigw --> hrapi
+apigw --> compapi
+apigw --> misapi
+apigw --> platapi
+apigw --> workflow
+
+' ============================================================================
+' CONNECTIONS - SERVICES TO DATA
+' ============================================================================
+authsvc --> pgdb
+opsapi --> pgdb
+assetapi --> pgdb
+salesapi --> pgdb
+finapi --> pgdb
+hrapi --> pgdb
+compapi --> pgdb
+misapi --> analyticsdb
+platapi --> docstore
+
+opsapi --> cache
+salesapi --> cache
+finapi --> cache
+
+' ============================================================================
+' CONNECTIONS - SERVICES TO INTEGRATION HUB
+' ============================================================================
+salesapi --> inthub
+finapi --> inthub
+compapi --> inthub
+
+inthub --> ewaygw
+inthub --> einvgw
+inthub --> gstgw
+inthub --> bankgw
+inthub --> tngw
+inthub --> ibmgw
+inthub --> laborgw
+inthub --> whatsapp
+
+' ============================================================================
+' CONNECTIONS - INTEGRATION TO EXTERNAL
+' ============================================================================
+ewaygw --> niceway : REST API
+einvgw --> nicirp : REST API
+gstgw --> gstn : REST API
+tngw --> tnmining : REST/RPA
+ibmgw --> ibm : Web Upload
+ibmgw --> dgms : Web Upload
+laborgw --> epfo : SFTP
+laborgw --> esic : Portal Upload
+salesapi --> icegate : API (CHA)
+salesapi --> dgft : API
+
+bankgw --> hdfc : H2H SFTP
+bankgw --> icici : API
+bankgw --> banks : SFTP
+bankgw --> adbank : SFTP
+
+inthub --> email
+inthub --> sms
+inthub --> wa
+
+opsapi --> maps : Geo Validation
+opsapi --> drone : Volume Survey
+assetapi --> gpssvc : Fleet Tracking
+
+' ============================================================================
+' CONNECTIONS - SECURITY
+' ============================================================================
+apigw --> idp : SSO/OAuth2
+apigw --> mfa : 2FA
+authsvc --> idp
+authsvc --> vault : Secrets
+opsapi --> auditlog
+salesapi --> auditlog
+finapi --> auditlog
+pgdb --> encrypt
+docstore --> encrypt
+
+' ============================================================================
+' CONNECTIONS - DATA FLOW
+' ============================================================================
+pgdb --> etl : Extract
+etl --> analyticsdb : Load & Transform
+pgdb --> backup : Daily
+docstore --> backup : Daily
+backup --> dr : Replicate
+
+' ============================================================================
+' CONNECTIONS - INFRASTRUCTURE
+' ============================================================================
+apigw -[hidden]-> k8s
+k8s --> monitor : Metrics
+k8s --> logs : Logs
+cicd --> k8s : Deploy
+
+' ============================================================================
+' CONNECTIONS - LOCAL QUARRY
+' ============================================================================
+mobprod ..> localcache : Offline Mode
+localcache ..> apigw : Sync when online
+wbdevice --> wbif : RS-232/TCP
+biodevice --> biometric : TCP/API
+wbif --> assetapi : Weight Data
+biometric --> hrapi : Attendance
+cctv ..> docstore : Video Upload
+tablets --> mobweigh : Field Capture
+
+' ============================================================================
+' NOTES
+' ============================================================================
+note right of apigw
+  **API Gateway Functions:**
+  • JWT validation
+  • Rate limiting (100 req/sec/user)
+  • Request/response logging
+  • Multi-quarry context injection
+  • Quarry-level access control
+end note
+
+note bottom of pgdb
+  **Database Strategy:**
+  • Multi-quarry data model (org_id, quarry_id)
+  • Row-level security (RLS) for isolation
+  • Partitioning by fiscal_year
+  • Geo-spatial indexes (PostGIS)
+  • 99.9% availability SLA
+end note
+
+note bottom of inthub
+  **Integration Patterns:**
+  • Event-driven (Kafka/RabbitMQ)
+  • Retry with exponential backoff
+  • Circuit breaker for external APIs
+  • Dead letter queue for failures
+  • Idempotency keys
+end note
+
+note top of k8s
+  **Deployment:**
+  • AWS Mumbai (primary)
+  • Azure Pune (DR)
+  • Auto-scale 2-10 pods per service
+  • Blue-green deployment
+  • Zero-downtime updates
+end note
+
+legend bottom right
+  **Technology Stack (v1.1):**
+  • **Frontend:** React 18 + TypeScript + Vite + Tailwind CSS
+  • **Mobile:** React Native + Expo (or PWA)
+  • **Backend:** Node.js + NestJS + TypeScript
+  • **Database:** PostgreSQL 15 + PostGIS
+  • **Document Store:** MinIO (S3-compatible)
+  • **Analytics:** ClickHouse (or TimescaleDB)
+  • **Cache:** Redis 7
+  • **Identity:** Keycloak (or Azure AD)
+  • **Queue:** RabbitMQ (or Apache Kafka)
+  • **Monitoring:** Prometheus + Grafana
+  • **Logs:** ELK Stack (Elasticsearch + Logstash + Kibana)
+  • **CI/CD:** GitLab CI + ArgoCD
+  • **Container:** Docker + Kubernetes
+  • **Cloud:** AWS Mumbai / Azure India Central
+end legend
+  • State: Zustand
+  • Validation: Zod
+  
+  **Key Features:**
+  • Config-driven architecture
+  • Offline-capable (SQLite)
+  • GST compliant (E-invoice)
+  • Double-entry accounting
+  • Multi-user with RBAC
+  • Responsive UI
+  • RESTful API
+  • Docker ready
+end note
+
+@enduml

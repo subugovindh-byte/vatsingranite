@@ -1,0 +1,37 @@
+{
+  "name": "vatsingranite-erp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Vatsin Granite Quarry Management & ERP Platform — Multi-Quarry Operations System",
+  "workspaces": [
+    "packages/api",
+    "packages/web",
+    "packages/shared"
+  ],
+  "scripts": {
+    "dev": "concurrently -n api,web -c cyan,magenta \"npm:dev -w @vatsingranite/api\" \"npm:dev -w @vatsingranite/web\"",
+    "dev:api": "npm run dev -w @vatsingranite/api",
+    "dev:web": "npm run dev -w @vatsingranite/web",
+    "build": "echo 'Web is pre-built; no server-side build step needed'",
+    "build:api": "npm run build -w @vatsingranite/shared && npm run build -w @vatsingranite/api",
+    "build:web": "npm run build -w @vatsingranite/shared && npm run build -w @vatsingranite/web",
+    "test": "npm run test -w @vatsingranite/api && npm run test -w @vatsingranite/web",
+    "lint": "npm run lint -w @vatsingranite/api && npm run lint -w @vatsingranite/web",
+    "start": "node packages/api/src/server.js",
+    "migrate": "npm run migrate -w @vatsingranite/api",
+    "seed": "npm run seed -w @vatsingranite/api",
+    "backup": "node scripts/backup.js",
+    "type-check": "npm run type-check -w @vatsingranite/web",
+    "manage": "python3 manage.py",
+    "manage:start": "python3 manage.py start",
+    "manage:stop": "python3 manage.py stop",
+    "manage:restart": "python3 manage.py restart",
+    "manage:status": "python3 manage.py status"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

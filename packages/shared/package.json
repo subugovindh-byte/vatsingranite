@@ -1,0 +1,21 @@
+{
+  "name": "@vatsingranite/shared",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Shared types and utilities for Vatsin Granite ERP",
+  "main": "src/index.js",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "echo 'Shared package used directly — no build step'",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}

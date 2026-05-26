@@ -1,0 +1,597 @@
+@startuml AB_Granite_Business_Flow!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam shadowing false
+
+title AB Granite Quarry ERP - Key Business Process Flows (v1.1)
+
+' ============================================================================
+' FLOW 1: PRODUCTION FLOW
+' ============================================================================
+|#E6FFE6|Mining Operations|
+start
+:Planning: Geological Survey & Mine Planning (M23);
+note right
+  Input: Lease area, mineable zones
+  Output: Mining plan, bench layout
+end note
+
+:Drilling: Drill holes for blasting;
+note right
+  Equipment: Drilling rig
+  Parameters: Hole depth, diameter, spacing
+end note
+
+:Blasting: Execute blast (M2);
+note right
+  PESO licence verification
+  Blaster certificate check
+  Explosives register update
+  Vibration monitoring
+  Yield estimation
+end note
+
+:Extraction: Extract blocks from quarry face (M1);
+note right
+  Equipment: Excavator, crane
+  Location: Bench level
+  GPS coordinates logged
+end note
+
+:Measurement: Measure blocks (L×W×H);
+note right
+  Calculate gross CBM
+  Calculate net CBM (wastage adjustment)
+  Digital calipers / measuring tape
+end note
+
+:Identification: Assign block number & QR code (M3);
+note right
+  Block No: {QUARRY_CODE}/{YEAR}/{SEQUENCE}
+  Example: ABG/2026/00451
+  RFID tagging (optional)
+  Photo capture (4 sides)
+end note
+
+:Stockyard: Move to stockyard location;
+note right
+  Location tracking
+  GPS coordinates
+  Stock register update
+end note
+
+|#FFE6E6|Quality & Grading|
+:Visual Inspection: Grade & color classification (M24);
+note right
+  Grade: A, B, C, Commercial
+  Color: Paradiso, Black Galaxy, etc.
+  Variety assignment
+end note
+
+if (Export quality?) then (yes)
+  :Lab Testing: Density, compressive strength, water absorption;
+else (no)
+  :Skip lab tests;
+endif
+
+:Update Block Status: Available for sale;
+stop
+
+' ============================================================================
+' FLOW 2: SALES & DESPATCH FLOW (DOMESTIC)
+' ============================================================================
+|#FFF9E6|Sales|
+start
+:Customer Inquiry;
+
+:Quotation: Send rate per CBM (M7);
+note right
+  Rate varies by variety & grade
+  Customer-specific pricing
+  Validity period
+end note
+
+:Sales Order: Create SO (M7);
+note right
+  Input: Customer, variety, qty, rate
+  Block reservation: Specific blocks tagged to SO
+  Advance payment terms
+end note
+
+if (Advance received?) then (yes)
+  :Payment Receipt: Record advance in GL (M11);
+else (no)
+  :Credit approval required;
+  stop
+endif
+
+|#E6F3FF|Despatch|
+:Block Allocation: Assign specific blocks to SO;
+
+:Weighbridge: Weigh vehicle (tare) (M9);
+note right
+  Empty truck weight
+  Vehicle details capture
+end note
+
+:Loading: Load blocks onto truck;
+note right
+  Supervisor verification
+  Photo/video evidence
+  GPS timestamp
+end note
+
+:Weighbridge: Weigh loaded vehicle (gross) (M9);
+note right
+  Gross weight
+  Net weight = Gross - Tare
+  Weight slip generation
+end note
+
+:Invoice Generation: Create GST invoice (M7);
+note right
+  HSN: 2516 (Granite)
+  GST Rate: 5%
+  CGST 2.5% + SGST 2.5% (intra-state)
+  IGST 5% (inter-state)
+end note
+
+|#FFDDDD|Compliance|
+:E-Way Bill: Generate EWB from NIC portal (M10);
+note right
+  Required if invoice value > ₹50,000
+  Distance-based validity
+  Vehicle number mandatory
+end note
+
+:E-Invoice: Generate IRN via IRP (M10);
+note right
+  Required if turnover > ₹5 crore
+  IRN + QR code on invoice
+  Auto-sent to GST portal
+end note
+
+:Mineral Despatch Permit (MDP): TN Mining Dept (M19);
+note right
+  Required for all mineral despatches
+  Online portal submission
+  MDP register maintained
+end note
+
+:Gate Pass: Issue gate pass with all documents;
+note right
+  Documents:
+  - Invoice (original + copies)
+  - E-Way Bill
+  - MDP
+  - Weight slip
+  - Delivery challan
+end note
+
+:Gate Out: Vehicle exit from quarry;
+note right
+  GPS coordinates logged
+  Gate management system (M26)
+  CCTV footage
+end note
+
+stop
+
+' ============================================================================
+' FLOW 3: EXPORT SALES FLOW
+' ============================================================================
+|#FFF9E6|Export Sales|
+start
+:Export Inquiry: Overseas buyer;
+
+:Proforma Invoice: Send PI with terms;
+note right
+  Currency: USD/EUR
+  Incoterms: FOB/CIF
+  Payment: LC/Advance
+end note
+
+:Export Sales Order: Create export SO (M8);
+note right
+  Buyer country
+  Port of loading (Chennai/Tuticorin)
+  Shipping line
+  Container details
+end note
+
+:LC Receipt / Advance Payment;
+
+|#E6F3FF|Stuffing & Shipping|
+:Block Preparation: Quality check & documentation;
+
+:Stuffing: Load container at quarry/port;
+note right
+  Container No.
+  Seal No.
+  Packing list
+  Photo/video evidence
+end note
+
+:Commercial Invoice: Export invoice (zero-rated GST);
+note right
+  GST Rate: 0% (IGST on exports)
+  LUT declaration
+  GSTIN of exporter
+end note
+
+:Shipping Bill: File with Customs (ICEGATE) (M8);
+note right
+  Port: Chennai/Tuticorin
+  HS Code: 25161100
+  Customs clearance
+  CHA coordination
+end note
+
+:Bill of Lading (BL): Issued by shipping line;
+
+|#FFDDDD|Post-Shipment|
+:EDPMS Upload: Export data (M8);
+note right
+  DGFT portal
+  Shipping bill details
+  BL details
+  Mandatory for export incentives
+end note
+
+:Bank Realization: Foreign exchange (FIRC);
+note right
+  AD-code bank
+  FIRC certificate
+  Forex gain/loss accounting
+end note
+
+stop
+
+' ============================================================================
+' FLOW 4: ROYALTY & COMPLIANCE FLOW
+' ============================================================================
+|#E6F9F9|Monthly Royalty|
+start
+:End of Month: Production reconciliation;
+
+:Prepare Royalty Return: Calculate royalty (M15);
+note right
+  Opening stock (previous month closing)
+  + Production (current month)
+  - Despatch (current month)
+  = Closing stock
+  
+  Royalty = Despatch × Rate per CBM
+  DMF = Royalty × 10-30%
+  NMET = Royalty × 2%
+end note
+
+:Internal Approval: CFO/Director sign-off;
+
+:Payment: Pay royalty + DMF + NMET (M11);
+note right
+  Payment mode: Online/Challan
+  Bank: State Treasury
+  Reference No. capture
+end note
+
+:TN Mining Portal: Upload royalty return (M15);
+note right
+  Portal: Tamil Nadu Mining Department
+  Attach challan/payment proof
+  Monthly return submission
+end note
+
+|#FFDDDD|Quarterly Compliance|
+:DGPS Survey: Submit quarterly DGPS coordinates (M15);
+note right
+  Surveyor engagement
+  Topographic survey
+  Boundary verification
+  Within lease area check
+end note
+
+:Upload to IBM: Submit Form F1 data (M15);
+note right
+  IBM portal (Indian Bureau of Mines)
+  Monthly production data
+  Quarterly DGPS
+end note
+
+|#FFDDDD|Annual Compliance|
+:Form H1: Annual return to IBM (M15);
+note right
+  Due: 30th April (for previous year)
+  Production summary
+  Employment details
+  Safety statistics
+  Machinery details
+end note
+
+:Star Rating: MCDR 2017 compliance (M15);
+note right
+  Self-assessment questionnaire
+  Environmental management
+  Safety practices
+  Target: 3-star or higher
+end note
+
+stop
+
+' ============================================================================
+' FLOW 5: PAYROLL FLOW
+' ============================================================================
+|#FFEEEE|HR & Payroll|
+start
+:Daily Attendance: Biometric capture (M14);
+note right
+  Devices: Biometric/RFID
+  Shifts: Day/Night/General
+  Geo-fencing validation
+end note
+
+:End of Month: Payroll processing;
+
+:Calculate Gross Pay: Basic + DA + HRA + Allowances;
+note right
+  Wages per day or monthly salary
+  OT calculation (1.5× or 2× rates)
+  Attendance-based computation
+end note
+
+:Calculate Statutory Deductions (M16);
+note right
+  EPF (Employee): 12% of basic
+  EPF (Employer): 12% of basic
+  ESI (Employee): 0.75% of gross (if < ₹21,000)
+  ESI (Employer): 3.25% of gross
+  Professional Tax: ₹200 (TN)
+  TDS: As per Income Tax Act
+end note
+
+:Calculate Net Pay: Gross - Deductions;
+
+:Payslip Generation: Email to employees;
+
+:Bank Transfer: Salary credit via NEFT/IMPS;
+note right
+  Salary account details
+  Payment date: 5th of next month
+end note
+
+|#FFDDDD|Statutory Compliance|
+:EPF Return: ECR upload to EPFO portal (M16);
+note right
+  Due: 15th of next month
+  Member-wise contribution
+  Challan payment
+end note
+
+:ESI Return: Upload to ESIC portal (M16);
+note right
+  Due: 15th of next month
+  Contribution payment
+end note
+
+:Form 16: Issue to employees (annual);
+note right
+  TDS certificate
+  Due: 15th June
+end note
+
+stop
+
+' ============================================================================
+' FLOW 6: PROCUREMENT FLOW
+' ============================================================================
+|#E6FFE6|Procurement|
+start
+:Purchase Requisition: Dept head raises PR (M6);
+note right
+  Item details
+  Quantity required
+  Delivery location (quarry)
+  Budget code
+end note
+
+if (Stock item?) then (yes)
+  :Check Inventory: Current stock vs reorder level;
+  if (Below reorder level?) then (no)
+    stop
+  endif
+else (no)
+endif
+
+:Quotation Request: Send RFQ to suppliers;
+note right
+  Minimum 3 quotations
+  Technical specifications
+  Delivery terms
+end note
+
+:Quotation Comparison: Commercial & technical evaluation;
+
+:Purchase Order: Issue PO to selected supplier (M6);
+note right
+  PO No., Date
+  Item, Qty, Rate
+  Delivery terms
+  Payment terms
+end note
+
+|#FFE6E6|Goods Receipt|
+:Goods Receipt: Inspect & accept (M6);
+note right
+  Physical verification
+  Quality check
+  Quarry-wise GRN
+  Stock update
+end note
+
+:Supplier Invoice: Receive GST invoice;
+
+:Invoice Verification: 3-way match (PO, GRN, Invoice);
+
+if (Match OK?) then (yes)
+  :Approve for Payment;
+else (no)
+  :Query/Return to supplier;
+  stop
+endif
+
+|#F0E6FF|Payment|
+:Payment Voucher: Record liability (M11);
+note right
+  Credit: Supplier account
+  Debit: Expense/Asset account
+  Quarry & cost center allocation
+  TDS deduction (if applicable)
+end note
+
+:Payment Processing: Pay via bank (M13);
+note right
+  NEFT/RTGS
+  Payment advice
+  TDS challan (if TDS deducted)
+end note
+
+:Close PO: Mark PO as completed;
+
+stop
+
+legend bottom right
+  **Module References:**
+  M1: Production & Drilling
+  M2: Blasting
+  M3: Blocks & Stockyard
+  M6: Procurement & Inventory
+  M7: Domestic Sales
+  M8: Export Sales
+  M9: Weighbridge
+  M10: E-Way Bill & E-Invoice
+  M11: General Ledger
+  M13: Banking & Treasury
+  M14: Payroll
+  M15: Mining Statutory Compliance
+  M16: Labour Statutory Compliance
+  M19: Permits & MDP
+  M23: Geological & Mine Planning
+  M24: Quality Lab
+  M26: Gate Management
+end legend
+
+@enduml!theme plain
+skinparam activityBackgroundColor #E6F3FF
+
+title AB Granite - Business Process Flow
+
+|Purchase|
+start
+:Receive supplier\nquotation;
+:Create Purchase Order;
+note right
+  • Select variety
+  • Quantity (CBM)
+  • Rate per CBM
+  • Transport charges
+end note
+:Approve PO;
+
+|Warehouse|
+:Receive blocks\nat yard;
+:Inspect & register\neach block;
+note right
+  Block details:
+  • L×W×H measurements
+  • CBM calculation
+  • Location
+  • Photo
+end note
+:Update status\nto "available";
+
+|Production|
+:Select block\nfor cutting;
+:Create cutting job;
+:Cut block\ninto slabs;
+:Register slabs;
+note right
+  Slab details:
+  • L×W×T measurements
+  • SqFt calculation
+  • Grade (A/B/C)
+  • Finish type
+  • Link to block
+end note
+
+if (Job work?) then (yes)
+  :Send to\njob worker;
+  :Create JW order;
+  :Receive finished;
+  :Update status;
+else (no)
+endif
+
+:Mark "available";
+
+|Sales|
+:Customer inquiry;
+:Create quotation;
+note right
+  • Select variety
+  • Quantity in SqFt
+  • Rate per SqFt
+  • Validity
+end note
+
+if (Approved?) then (yes)
+  :Convert to SO;
+  :Reserve slabs;
+  :Create GST Invoice;
+  note right
+    Auto-calculate:
+    • CGST/SGST or IGST
+    • Generate IRN
+    • QR code
+  end note
+  :Generate PDF\nwith IRN;
+  :Mark slabs "sold";
+  
+  |Accounts|
+  :Record payment;
+  
+  if (Full payment?) then (yes)
+    :Status = "paid";
+  else (partial)
+    :Status = "partial";
+  endif
+  
+  :Auto journal entry;
+  note right
+    Dr. Bank A/C
+    Cr. Sales A/C
+  end note
+  
+  stop
+else (no)
+  :Mark "expired";
+  stop
+endif
+
+|Finance|
+fork
+  :Month-end;
+  :P&L Report;
+  :Balance Sheet;
+fork again
+  :GST compliance;
+  :GSTR-1;
+  :GSTR-3B;
+  :File returns;
+fork again
+  :Inventory report;
+  :Stock valuation;
+  :Aging analysis;
+end fork
+
+stop
+
+@enduml
