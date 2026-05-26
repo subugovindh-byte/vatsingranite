@@ -181,7 +181,7 @@ export default function BankingPage() {
             <div className="modal-body">
               <div className="fg2">
                 <div className="fg"><label className="fl">Bank Name *</label><input className="fi" value={acForm.bank} onChange={acf('bank')} placeholder="HDFC Bank" /></div>
-                <div className="fg"><label className="fl">Branch</label><input className="fi" value={acForm.branch} onChange={acf('branch')} placeholder="Krishnagiri" /></div>
+                <div className="fg"><label className="fl">Branch</label><input className="fi" value={acForm.branch} onChange={acf('branch')} placeholder="Dharmapuri" /></div>
               </div>
               <div className="fg2">
                 <div className="fg"><label className="fl">Account No. *</label><input className="fi" value={acForm.acno} onChange={acf('acno')} placeholder="XXXX-XXXX-1234" /></div>

@@ -67,7 +67,7 @@ export default function ExportSalesPage() {
     const buyer = buyers.find(b => b.name === exp.buyer) || { name: exp.buyer, country: exp.country, contact: '', email: '', currency: 'USD', payment_terms: 'LC at sight' };
     const dateStr  = exp.date   ? new Date(exp.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
     const blStr    = exp.bl_date ? new Date(exp.bl_date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
-    const invNo    = `ABG/EXP/${exp.so.replace('EXP-', '').replace('-', '/')}`;
+    const invNo    = `VAT/EXP/${exp.so.replace('EXP-', '').replace('-', '/')}`;
     const unitRate = exp.cbm > 0 ? (exp.usd / exp.cbm).toFixed(2) : '—';
 
     const html = `<!DOCTYPE html><html><head><title>Commercial Invoice — ${esc(invNo)}</title>
@@ -104,8 +104,8 @@ export default function ExportSalesPage() {
 
 <div class="hdr">
   <div>
-    <div class="co-name">AB GRANITE</div>
-    <div class="co-sub">Chendrapalli · Krishnagiri District · Tamil Nadu 635 108 · India</div>
+    <div class="co-name">VATSIN GRANITE</div>
+    <div class="co-sub">Dharmapuri District · Tamil Nadu · India</div>
     <div class="co-sub">IEC: AABCA1234B &nbsp;|&nbsp; GSTIN: 33AABCA1234B1Z5 &nbsp;|&nbsp; AD Code: HDFC0001234</div>
     <div class="co-sub">Email: info@vatsingranite.com &nbsp;|&nbsp; Phone: +91-4362-123456</div>
   </div>
@@ -173,13 +173,13 @@ export default function ExportSalesPage() {
 <div class="bottom">
   <div class="bank">
     <b>Beneficiary Bank Details</b><br/>
-    Bank: HDFC Bank, Krishnagiri Branch<br/>
+    Bank: HDFC Bank, Dharmapuri Branch<br/>
     A/C No.: XXXX-XXXX-1234 &nbsp;|&nbsp; IFSC: HDFC0001234<br/>
     SWIFT Code: HDFCINBBXXX<br/>
     Account Name: Vatsin Granite Quarry
   </div>
   <div class="sign">
-    For <b>AB GRANITE</b><br/><br/><br/>
+    For <b>VATSIN GRANITE</b><br/><br/><br/>
     ____________________________<br/>
     Authorised Signatory
   </div>
@@ -187,7 +187,7 @@ export default function ExportSalesPage() {
 
 <div class="note">
   We certify that this invoice is true and correct and that the goods described above have originated in India.
-  Export under Letter of Undertaking (LUT) — GST zero-rated. Subject to Krishnagiri jurisdiction.
+  Export under Letter of Undertaking (LUT) — GST zero-rated. Subject to Dharmapuri jurisdiction.
 </div>
 
 </div>
@@ -228,8 +228,8 @@ export default function ExportSalesPage() {
 <div class="outer">
 <div class="hdr">
   <div>
-    <div class="co-name">AB GRANITE</div>
-    <div class="co-sub">Chendrapalli · Krishnagiri District · Tamil Nadu · India</div>
+    <div class="co-name">VATSIN GRANITE</div>
+    <div class="co-sub">Dharmapuri District · Tamil Nadu · India</div>
     <div class="co-sub">IEC: AABCA1234B</div>
   </div>
   <div style="text-align:right;font-size:9px">
@@ -256,7 +256,7 @@ export default function ExportSalesPage() {
       const kg  = Math.round(Number(vol) * 2700).toLocaleString();
       return `<tr>
         <td class="c">${i + 1}</td>
-        <td>ABG/2026/${String(20 + i).padStart(5, '0')}</td>
+        <td>VAT/2026/${String(20 + i).padStart(5, '0')}</td>
         <td class="c">Paradiso</td>
         <td class="r">${l}</td><td class="r">${w}</td><td class="r">${h}</td>
         <td class="r">${vol}</td><td class="r">${kg}</td>
@@ -276,7 +276,7 @@ export default function ExportSalesPage() {
   <div class="sum-box"><div class="sum-lbl">Total CBM</div><div class="sum-val">${exp.cbm.toFixed(3)}</div></div>
   <div class="sum-box"><div class="sum-lbl">Gross Weight</div><div class="sum-val">${Math.round(exp.cbm * 2700).toLocaleString()} kg</div></div>
   <div class="sum-box"><div class="sum-lbl">Avg CBM/Block</div><div class="sum-val">${avgCbm}</div></div>
-  <div class="sum-box" style="text-align:right">For <b>AB GRANITE</b><br/><br/>___________<br/>Auth. Sign.</div>
+  <div class="sum-box" style="text-align:right">For <b>VATSIN GRANITE</b><br/><br/>___________<br/>Auth. Sign.</div>
 </div>
 </div>
 <script>window.print(); window.close();<\/script>

@@ -90,7 +90,7 @@ export default function AccountsPage() {
 </style></head><body>
 <div class="outer">
   <div class="hdr">
-    <div><div class="co">AB GRANITE</div><div class="co-sub">Krishnagiri · TN</div></div>
+    <div><div class="co">VATSIN GRANITE</div><div class="co-sub">Dharmapuri · TN</div></div>
     <div style="text-align:right"><div class="lbl">Voucher No.</div><div style="font-size:13px;font-weight:700">${esc(v.voucher_no ?? v.vno)}</div></div>
   </div>
   <div class="title">${esc(v.voucher_type ?? v.type)} Voucher</div>
@@ -138,7 +138,7 @@ export default function AccountsPage() {
   td { padding: 5px 8px; border-bottom: 1px solid #eee; }
   .sign { display: flex; justify-content: space-between; margin-top: 40px; font-size: 9px; }
 </style></head><body>
-<h2>AB GRANITE — Profit &amp; Loss Statement</h2>
+<h2>VATSIN GRANITE — Profit &amp; Loss Statement</h2>
 <div class="sub">For the month of May 2026 &nbsp;|&nbsp; FY 2025-26 &nbsp;|&nbsp; Subject to Audit</div>
 <table>
   <thead><tr><th>Account Head</th><th style="text-align:right">This Month (₹)</th><th style="text-align:right">YTD (₹)</th><th style="text-align:right">Annual Budget (₹)</th><th style="text-align:right">YTD Variance</th></tr></thead>

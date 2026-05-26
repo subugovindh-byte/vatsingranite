@@ -34,7 +34,7 @@ function printSlip(s: any) {
 </style>
 </head><body>
 <div class="center">
-  <div class="company">AB GRANITE QUARRY</div>
+  <div class="company">VATSIN GRANITE QUARRY</div>
   <div class="sub">Kondampatti, Dharmapuri Dist., Tamil Nadu</div>
   <div class="title center">WEIGHMENT SLIP / GATE PASS</div>
 </div>
@@ -163,7 +163,7 @@ export default function WeighbridgePage() {
         <div className="card-body">
           <div className="fg4">
             <div className="fg"><label className="fl">Vehicle No.</label><input className="fi" value={form.vehicleNo} onChange={ff('vehicleNo')} placeholder="TN-33-AB-1234" /></div>
-            <div className="fg"><label className="fl">Block No. (Scan QR)</label><input className="fi" value={form.blockNo} onChange={ff('blockNo')} placeholder="ABG/2026/00xxx" /></div>
+            <div className="fg"><label className="fl">Block No. (Scan QR)</label><input className="fi" value={form.blockNo} onChange={ff('blockNo')} placeholder="VAT/2026/00xxx" /></div>
             <div className="fg"><label className="fl">Tare Weight (kg)</label><input className="fi" type="number" value={form.tareWeightKg} onChange={ff('tareWeightKg')} placeholder="0" /></div>
             <div className="fg"><label className="fl">Gross Weight (kg)</label><input className="fi" type="number" value={form.grossWeightKg} onChange={ff('grossWeightKg')} placeholder="0" /></div>
           </div>

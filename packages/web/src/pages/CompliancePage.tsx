@@ -23,11 +23,11 @@ export default function CompliancePage() {
     { id: 'C004', category: 'IBM', item: 'Monthly Mineral Return (Form-H)', authority: 'IBM Bengaluru', due: '15 Jun 2026', frequency: 'Monthly', status: 'pending', remarks: '' },
     { id: 'C005', category: 'IBM', item: 'Annual Mineral Return (Form-F1)', authority: 'IBM Bengaluru', due: '30 Apr 2027', frequency: 'Annual', status: 'not_due', remarks: '' },
     { id: 'C006', category: 'IBM', item: 'Mining Plan Compliance', authority: 'IBM Bengaluru', due: 'Annual', frequency: 'Annual', status: 'compliant', remarks: '' },
-    { id: 'C007', category: 'TNPCB', item: 'Consent to Operate (Air/Water)', authority: 'TNPCB Krishnagiri', due: '31 Mar 2027', frequency: 'Annual', status: 'compliant', remarks: '' },
-    { id: 'C008', category: 'TNPCB', item: 'Monthly Dust Monitoring', authority: 'TNPCB Krishnagiri', due: '30 Jun 2026', frequency: 'Monthly', status: 'pending', remarks: '' },
+    { id: 'C007', category: 'TNPCB', item: 'Consent to Operate (Air/Water)', authority: 'TNPCB Dharmapuri', due: '31 Mar 2027', frequency: 'Annual', status: 'compliant', remarks: '' },
+    { id: 'C008', category: 'TNPCB', item: 'Monthly Dust Monitoring', authority: 'TNPCB Dharmapuri', due: '30 Jun 2026', frequency: 'Monthly', status: 'pending', remarks: '' },
     { id: 'C009', category: 'PESO', item: 'Magazine Licence Renewal', authority: 'PESO Chennai', due: '31 Dec 2026', frequency: 'Annual', status: 'compliant', remarks: '' },
     { id: 'C010', category: 'PESO', item: 'Quarterly Explosive Return', authority: 'PESO Chennai', due: '15 Jul 2026', frequency: 'Quarterly', status: 'not_due', remarks: '' },
-    { id: 'C011', category: 'Labour', item: 'CLRA Principal Employer Return', authority: 'Dy. CLC Krishnagiri', due: '30 Sep 2026', frequency: 'Annual', status: 'not_due', remarks: '' },
+    { id: 'C011', category: 'Labour', item: 'CLRA Principal Employer Return', authority: 'Dy. CLC Dharmapuri', due: '30 Sep 2026', frequency: 'Annual', status: 'not_due', remarks: '' },
     { id: 'C012', category: 'Labour', item: 'POSH Committee Meeting', authority: 'Internal', due: 'Quarterly', frequency: 'Quarterly', status: 'compliant', remarks: '' },
   ]);
 
@@ -161,7 +161,7 @@ export default function CompliancePage() {
 </table>
 
 <div class="sign">
-  <div>Place: Krishnagiri, Tamil Nadu</div>
+  <div>Place: Dharmapuri, Tamil Nadu</div>
   <div>Signature of Lessee / Authorised Person<br/><br/>Name: ____________________<br/>Designation: ______________</div>
 </div>
 <div class="note">

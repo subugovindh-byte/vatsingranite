@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useToastStore } from '../store';
 
 const EWB_STATUSES = ['in_transit', 'delivered', 'cancelled'];
-const BLANK = { inv_no: '', gen_date: new Date().toISOString().slice(0, 10), vehicle: '', from: 'Krishnagiri (635203)', to: '', distance_km: '', valid_till: '', value: '', status: 'in_transit' };
+const BLANK = { inv_no: '', gen_date: new Date().toISOString().slice(0, 10), vehicle: '', from: 'Dharmapuri (636701)', to: '', distance_km: '', valid_till: '', value: '', status: 'in_transit' };
 
 const printEWB = (e: any) => {
   const w = window.open('', '_blank', 'width=800,height=600');
@@ -167,7 +167,7 @@ export default function EWayBillPage() {
             </div>
             <div className="modal-body">
               <div className="fg2">
-                <div className="fg"><label className="fl">Invoice No. *</label><input className="fi" value={form.inv_no} onChange={f('inv_no')} placeholder="ABG/INV/2526/004" /></div>
+                <div className="fg"><label className="fl">Invoice No. *</label><input className="fi" value={form.inv_no} onChange={f('inv_no')} placeholder="VAT/INV/2526/004" /></div>
                 <div className="fg"><label className="fl">Generation Date</label><input className="fi" type="date" value={form.gen_date} onChange={f('gen_date')} /></div>
               </div>
               <div className="fg2">
@@ -175,7 +175,7 @@ export default function EWayBillPage() {
                 <div className="fg"><label className="fl">Invoice Value (₹)</label><input className="fi" type="number" value={form.value} onChange={f('value')} placeholder="0" /></div>
               </div>
               <div className="fg2">
-                <div className="fg"><label className="fl">From (Place + PIN)</label><input className="fi" value={form.from} onChange={f('from')} placeholder="Krishnagiri (635203)" /></div>
+                <div className="fg"><label className="fl">From (Place + PIN)</label><input className="fi" value={form.from} onChange={f('from')} placeholder="Dharmapuri (636701)" /></div>
                 <div className="fg"><label className="fl">To (Place + PIN)</label><input className="fi" value={form.to} onChange={f('to')} placeholder="Chennai (600028)" /></div>
               </div>
               <div className="fg3">

@@ -85,7 +85,7 @@ const SECTIONS: Section[] = [
       { type: 'h3', text: '2.3 Add Additional Quarries' },
       { type: 'p', text: 'Path: Quarry & Blocks → Quarries → Add Quarry' },
       { type: 'ul', items: [
-        'Each quarry needs a unique code (e.g. ABG, PARA)',
+        'Each quarry needs a unique code (e.g. VATSIN, VATSIN-S)',
         'Enter district, state, GSTIN (if registered separately), DGMS Reg. No., IBM Code',
         'Set the primary/default quarry using "Set Default" button — all forms pre-select it',
         'Secondary quarries can be removed only if they have no associated data (blocks, employees, etc.)',

@@ -115,7 +115,7 @@ export default function SalesPage() {
 </style></head><body>
 
 <div class="hdr">
-  <h1>AB GRANITE</h1>
+  <h1>VATSIN GRANITE</h1>
   <p>Dharmapuri District, Tamil Nadu &nbsp;|&nbsp; GSTIN: 33AABCA1234B1Z5 &nbsp;|&nbsp; HSN: 2516</p>
   <p>Email: info@vatsingranite.com &nbsp;|&nbsp; Phone: +91-4362-123456</p>
 </div>
@@ -175,7 +175,7 @@ export default function SalesPage() {
   <div>
     <b>Bank Details for Payment</b><br/>
     Bank: HDFC Bank &nbsp;|&nbsp; A/C: XXXX-XXXX-1234<br/>
-    IFSC: HDFC0001234 &nbsp;|&nbsp; Branch: Krishnagiri
+    IFSC: HDFC0001234 &nbsp;|&nbsp; Branch: Dharmapuri
   </div>
   <div style="text-align:right">
     For Vatsin Granite Quarry<br/><br/><br/>
@@ -185,7 +185,7 @@ export default function SalesPage() {
 </div>
 
 <div class="note">
-  This is a computer-generated receipt. Goods once sold are not returnable. E-Way Bill to be generated for consignments above ₹50,000 / 50 km. Subject to Krishnagiri jurisdiction.
+  This is a computer-generated receipt. Goods once sold are not returnable. E-Way Bill to be generated for consignments above ₹50,000 / 50 km. Subject to Dharmapuri jurisdiction.
 </div>
 </body></html>`;
 

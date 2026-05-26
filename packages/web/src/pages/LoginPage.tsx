@@ -78,9 +78,9 @@ export default function LoginPage() {
   const Header = () => (
     <div style={{ textAlign: 'center', marginBottom: 6 }}>
       <div style={{ fontSize: 28, marginBottom: 4, color: 'var(--rust)' }}>⛏</div>
-      <div className="login-logo">AB GRANITE ERP</div>
+      <div className="login-logo">VATSIN GRANITE ERP</div>
       <div className="login-sub">Integrated Quarry Management Platform</div>
-      <div className="login-tagline">Chendrapalli · Krishnagiri · Tamil Nadu</div>
+      <div className="login-tagline">Dharmapuri · Tamil Nadu</div>
     </div>
   );
 

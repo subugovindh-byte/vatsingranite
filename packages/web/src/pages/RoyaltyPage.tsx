@@ -77,7 +77,7 @@ export default function RoyaltyPage() {
   <div class="hdr">
     <div class="title">ROYALTY PAYMENT CHALLAN</div>
     <div class="sub">Tamil Nadu Minor Mineral Concession Rules · Seigniorage Fee</div>
-    <div class="sub">Vatsin Granite · Krishnagiri District, Tamil Nadu</div>
+    <div class="sub">Vatsin Granite · Dharmapuri District, Tamil Nadu</div>
   </div>
   <div class="row"><span class="lbl">Challan No.</span><span class="val">${esc(c.challan_no)}</span></div>
   <div class="row"><span class="lbl">Payment Date</span><span class="val">${dateStr}</span></div>
@@ -191,7 +191,7 @@ export default function RoyaltyPage() {
           <div className="card-body">
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
               {[
-                { title: 'District Mineral Foundation (DMF)', rows: [['Rate', '10% of royalty amount'], ['Authority', 'District Collector, Krishnagiri'], ['Fund Purpose', 'Local area development around mining'], ['FY Contribution', `₹${totalDMF.toLocaleString()}`], ['Payment Mode', 'Along with monthly royalty challan']] },
+                { title: 'District Mineral Foundation (DMF)', rows: [['Rate', '10% of royalty amount'], ['Authority', 'District Collector, Dharmapuri'], ['Fund Purpose', 'Local area development around mining'], ['FY Contribution', `₹${totalDMF.toLocaleString()}`], ['Payment Mode', 'Along with monthly royalty challan']] },
                 { title: 'NMET — National Mineral Exploration Trust', rows: [['Rate', '2% of royalty amount'], ['Authority', 'IBM (Indian Bureau of Mines)'], ['Fund Purpose', 'Regional/national mineral exploration'], ['FY Contribution', `₹${totalNMET.toLocaleString()}`], ['Payment Mode', 'Along with monthly royalty challan']] },
               ].map(({ title, rows }) => (
                 <div key={title}>

@@ -110,7 +110,7 @@ export default function ReportsPage() {
 ${rows.map((r, i) => `<tr><td>${i + 1}</td><td>${r.name}</td><td>${r.gstin}</td><td class="r">${r.ex.toFixed(3)}</td><td class="r">${r.di.toFixed(3)}</td><td class="r">${Math.max(0, r.ex - r.di).toFixed(3)}</td></tr>`).join('')}
 <tr class="tot"><td colspan="3" class="r">TOTAL</td><td class="r">${tot.ex.toFixed(3)}</td><td class="r">${tot.di.toFixed(3)}</td><td class="r">${Math.max(0, tot.ex - tot.di).toFixed(3)}</td></tr>
 </tbody></table>
-<div class="sign"><div>Place: Krishnagiri, TN</div><div>Signature of Lessee<br/><br/>Name: ________________<br/>Designation: __________</div></div>
+<div class="sign"><div>Place: Dharmapuri, TN</div><div>Signature of Lessee<br/><br/>Name: ________________<br/>Designation: __________</div></div>
 <div class="note">Submitted under Rule ${isAnnual ? '44' : '45'} of MCDR 2017. Figures in Cubic Metres (CBM).</div>
 </body></html>`);
 
@@ -133,7 +133,7 @@ ${orders.slice(0, 50).map((o: any, i: number) => `<tr><td>${i + 1}</td><td>${o.o
 <tr><td>4</td><td>ITC Available (input)</td><td class="r">—</td><td class="r">—</td><td class="r">—</td><td class="r">—</td></tr>
 <tr class="tot"><td colspan="2" class="r">Net Tax Payable</td><td class="r">${taxable.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td><td class="r">${igst.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td><td class="r">0</td><td class="r">0</td></tr>
 </tbody></table>`}
-<div class="sign"><div>Place: Krishnagiri, TN</div><div>Authorised Signatory<br/><br/>Name: ________________</div></div>
+<div class="sign"><div>Place: Dharmapuri, TN</div><div>Authorised Signatory<br/><br/>Name: ________________</div></div>
 <div class="note">This is a system-generated summary. File on GST portal: gstin.gov.in. ITC reconciliation with GSTR-2B required before filing GSTR-3B.</div>
 </body></html>`);
 
@@ -166,7 +166,7 @@ ${details.length > 0 ? `<table><thead><tr><th>Emp Code</th><th>Name</th><th clas
 ${details.slice(0, 50).map((d: any) => `<tr><td>${d.emp_code || '—'}</td><td>${d.emp_name || '—'}</td><td class="r">${Number(d.gross_pay || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td>${isPF ? `<td class="r">${Number(d.epf_employee || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td><td class="r">${Number(d.epf_employer || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td><td class="r">${(Number(d.epf_employee || 0) + Number(d.epf_employer || 0)).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td>` : isESI ? `<td class="r">${Number(d.esi_employee || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td><td class="r">${Number(d.esi_employer || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td><td class="r">${(Number(d.esi_employee || 0) + Number(d.esi_employer || 0)).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td>` : `<td class="r">${Number(d.basic_pay || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td><td class="r">${Number(d.tds || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td>`}</tr>`).join('')}
 <tr class="tot"><td colspan="2" class="r">TOTAL</td><td class="r">${totalGross.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td>${isPF ? `<td class="r">${totalEPF.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td><td class="r">${totalEPFer.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td><td class="r">${(totalEPF + totalEPFer).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td>` : isESI ? `<td class="r">${totalESI.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td><td class="r">${totalESIer.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td><td class="r">${(totalESI + totalESIer).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td>` : `<td class="r">—</td><td class="r">${totalTDS.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td>`}</tr>
 </tbody></table>` : `<p style="color:#888;text-align:center;padding:20px">No payroll run found for ${monthName}. Please run payroll first.</p>`}
-<div class="sign"><div>Place: Krishnagiri, TN</div><div>Authorised Signatory<br/><br/>Name: ________________<br/>Designation: HR / Finance</div></div>
+<div class="sign"><div>Place: Dharmapuri, TN</div><div>Authorised Signatory<br/><br/>Name: ________________<br/>Designation: HR / Finance</div></div>
 <div class="note">${isPF ? `ECR file to be uploaded on EPFO unified portal. PF challan to be paid by 15th of following month.` : isESI ? `ESI contribution to be remitted to ESIC. Online return on esic.in.` : `TDS to be deposited by 7th of following month. Quarterly return (26Q) on TRACES portal.`}</div>
 </body></html>`);
 
@@ -185,7 +185,7 @@ ${items.slice(0, 20).map((c: any) => `<tr><td>${c.item_name || '—'}</td><td>${
 ${items.length === 0 ? '<tr><td colspan="6" style="text-align:center;color:#888">No explosive records found</td></tr>' : ''}
 <tr class="tot"><td colspan="2" class="r">TOTAL</td><td class="r">0</td><td class="r">${totalRec.toFixed(2)}</td><td class="r">${totalCon.toFixed(2)}</td><td class="r">${(totalRec - totalCon).toFixed(2)}</td></tr>
 </tbody></table>
-<div class="sign"><div>Place: Krishnagiri, TN</div><div>Competent Person / Shotfirer<br/><br/>Name: ________________<br/>Licence No: ___________</div></div>
+<div class="sign"><div>Place: Dharmapuri, TN</div><div>Competent Person / Shotfirer<br/><br/>Name: ________________<br/>Licence No: ___________</div></div>
 <div class="note">Quarterly return under Rule 151 of Explosives Rules 2008. Submit to Controller of Explosives, PESO by 15th of month following quarter end.</div>
 </body></html>`);
 
@@ -194,7 +194,7 @@ ${items.length === 0 ? '<tr><td colspan="6" style="text-align:center;color:#888"
 <h2>${report.toUpperCase()}</h2>
 <h3>Vatsin Granite Quarry | Date: ${today}</h3>
 <p style="text-align:center;color:#888;padding:40px">This report is submitted as required. Please complete the relevant portal/form.<br/>Refer to the Compliance Register for filing dates and status.</p>
-<div class="sign"><div>Place: Krishnagiri, TN</div><div>Authorised Signatory<br/><br/>Name: ________________</div></div>
+<div class="sign"><div>Place: Dharmapuri, TN</div><div>Authorised Signatory<br/><br/>Name: ________________</div></div>
 </body></html>`);
       }
     } catch {

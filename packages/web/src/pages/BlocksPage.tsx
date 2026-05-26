@@ -22,7 +22,7 @@ function BlockSticker({ block }: { block: any }) {
   return (
     <div className="block-sticker">
       <div className="bs-header">
-        <div className="bs-company">AB GRANITE</div>
+        <div className="bs-company">VATSIN GRANITE</div>
         <div className="bs-tagline">HSN 2516 · DGMS · IBM · TNMMCR</div>
       </div>
       <div className="bs-body">

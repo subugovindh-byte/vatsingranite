@@ -225,8 +225,8 @@ export default function InvoicesPage() {
 
 <div class="hdr">
   <div>
-    <div class="co-name">AB GRANITE</div>
-    <div class="co-sub">Chendrapalli · Krishnagiri District · Tamil Nadu 635 108</div>
+    <div class="co-name">VATSIN GRANITE</div>
+    <div class="co-sub">Dharmapuri District · Tamil Nadu</div>
     <div class="co-sub">GSTIN: 33AABCA1234B1Z5 &nbsp;|&nbsp; PAN: AABCA1234B</div>
     <div class="co-sub">Email: info@vatsingranite.com &nbsp;|&nbsp; Phone: +91-4362-123456</div>
   </div>
@@ -306,19 +306,19 @@ ${inv.irn || inv.ewb ? `<div class="irn-row">
 <div class="bottom">
   <div class="bank">
     <b>Bank Details for NEFT / RTGS</b><br/>
-    Bank: HDFC Bank, Krishnagiri Branch<br/>
+    Bank: HDFC Bank, Dharmapuri Branch<br/>
     A/C No.: XXXX-XXXX-1234 &nbsp;|&nbsp; IFSC: HDFC0001234<br/>
     Account Name: Vatsin Granite Quarry
   </div>
   <div class="sign">
-    For <b>AB GRANITE</b><br/><br/><br/>
+    For <b>VATSIN GRANITE</b><br/><br/><br/>
     ____________________________<br/>
     Authorised Signatory
   </div>
 </div>
 
 <div class="note">
-  1. Goods once sold are not returnable. 2. Subject to Krishnagiri jurisdiction. 3. E-Way Bill required for consignments above ₹50,000 / 50 km.
+  1. Goods once sold are not returnable. 2. Subject to Dharmapuri jurisdiction. 3. E-Way Bill required for consignments above ₹50,000 / 50 km.
   4. This is a computer-generated tax invoice. 5. GST payable on reverse charge: No.
 </div>
 

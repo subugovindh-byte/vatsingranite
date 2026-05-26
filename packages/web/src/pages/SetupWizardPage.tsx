@@ -91,7 +91,7 @@ export default function SetupWizardPage() {
               </div>
               <div className="fg" style={{ marginTop: 12 }}>
                 <label className="fl">Registered Address</label>
-                <input className="fi" value={org.registeredAddress} onChange={fo('registeredAddress')} placeholder="123, Industrial Area, Krishnagiri - 635001" />
+                <input className="fi" value={org.registeredAddress} onChange={fo('registeredAddress')} placeholder="123, Industrial Area, Dharmapuri - 636701" />
               </div>
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 24 }}>
                 <button className="btn btn-p" onClick={saveOrg} disabled={saving}>{saving ? 'Saving…' : 'Next →'}</button>
@@ -105,10 +105,10 @@ export default function SetupWizardPage() {
               <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 20, color: 'var(--t1)' }}>Step 2 — Primary Quarry</div>
               <div className="fg2">
                 <div className="fg"><label className="fl">Quarry Name *</label><input className="fi" value={quarry.quarryName} onChange={fq('quarryName')} placeholder="Vatsin Granite Quarry" /></div>
-                <div className="fg"><label className="fl">Quarry Code *</label><input className="fi" value={quarry.quarryCode} onChange={fq('quarryCode')} placeholder="ABG001" /></div>
+                <div className="fg"><label className="fl">Quarry Code *</label><input className="fi" value={quarry.quarryCode} onChange={fq('quarryCode')} placeholder="VATSIN001" /></div>
               </div>
               <div className="fg2" style={{ marginTop: 12 }}>
-                <div className="fg"><label className="fl">District</label><input className="fi" value={quarry.district} onChange={fq('district')} placeholder="Krishnagiri" /></div>
+                <div className="fg"><label className="fl">District</label><input className="fi" value={quarry.district} onChange={fq('district')} placeholder="Dharmapuri" /></div>
                 <div className="fg"><label className="fl">State</label><input className="fi" value={quarry.state} onChange={fq('state')} placeholder="Tamil Nadu" /></div>
               </div>
               <div className="fg2" style={{ marginTop: 12 }}>

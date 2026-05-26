@@ -180,7 +180,7 @@ export default function QuarriesPage() {
                 </div>
               </div>
               <div className="fg2">
-                <div className="fg"><label className="fl">District</label><input className="fi" value={form.district} onChange={f('district')} placeholder="Krishnagiri" /></div>
+                <div className="fg"><label className="fl">District</label><input className="fi" value={form.district} onChange={f('district')} placeholder="Dharmapuri" /></div>
                 <div className="fg"><label className="fl">State</label><input className="fi" value={form.state} onChange={f('state')} placeholder="Tamil Nadu" /></div>
               </div>
               <div className="fg2">

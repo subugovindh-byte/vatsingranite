@@ -3,8 +3,8 @@ import { useParams } from 'react-router-dom';
 import { useToastStore } from '../store';
 
 const QUARRIES_DEMO: Record<string, { quarry_code: string; quarry_name: string; district: string }> = {
-  '1': { quarry_code: 'VATSIN-001', quarry_name: 'Vatsin Granite', district: 'Krishnagiri' },
-  '2': { quarry_code: 'PARA-001', quarry_name: 'Paradiso Quarry', district: 'Krishnagiri' },
+  '1': { quarry_code: 'VATSIN-001', quarry_name: 'Vatsin Granite', district: 'Dharmapuri' },
+  '2': { quarry_code: 'VATSIN-S-001', quarry_name: 'Vatsin South Quarry', district: 'Hosur' },
 };
 
 const ZONES = ['Zone A', 'Zone B', 'Zone C', 'Zone D'];

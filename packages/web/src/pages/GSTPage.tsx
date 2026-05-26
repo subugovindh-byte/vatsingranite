@@ -239,7 +239,7 @@ export default function GSTPage() {
             </div>
             <div className="modal-body">
               <div className="fg2">
-                <div className="fg"><label className="fl">Invoice No. *</label><input className="fi" value={form.inv} onChange={f('inv')} placeholder="ABG/INV/2526/001" /></div>
+                <div className="fg"><label className="fl">Invoice No. *</label><input className="fi" value={form.inv} onChange={f('inv')} placeholder="VAT/INV/2526/001" /></div>
                 <div className="fg"><label className="fl">Date</label><input className="fi" type="date" value={form.date} onChange={f('date')} /></div>
               </div>
               <div className="fg2">
