@@ -27,6 +27,8 @@ router.get('/orders', async (req, res, next) => {
         so.customer_id,
         so.source_quarry_id AS quarry_id,
         c.customer_name,
+        c.gstin AS customer_gstin,
+        c.state AS customer_state,
         q.quarry_name,
         COALESCE(SUM(sol.qty_cbm), 0)    AS total_cbm,
         COALESCE(SUM(sol.line_value), 0) AS order_value,
