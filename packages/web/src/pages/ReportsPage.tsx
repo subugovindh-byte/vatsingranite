@@ -76,10 +76,16 @@ export default function ReportsPage() {
     .note{margin-top:12px;font-size:8px;color:#555;border-top:1px solid #ddd;padding-top:6px}`;
 
   const handleStatutoryDownload = async (report: string) => {
+    // Returns are for the month just ended (January → December of last year).
     const now = new Date();
-    const year = String(now.getFullYear());
-    const mon = String(now.getMonth()).padStart(2, '0') || '05';
-    const monthName = new Date(+year, +mon - 1, 1).toLocaleString('en-IN', { month: 'long', year: 'numeric' });
+    const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const year = String(prev.getFullYear());
+    const mon = String(prev.getMonth() + 1).padStart(2, '0');
+    const monthName = prev.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
+    const monthEnd = new Date(prev.getFullYear(), prev.getMonth() + 1, 0).getDate();
+    const fromDate = `${year}-${mon}-01`;
+    const toDate = `${year}-${mon}-${String(monthEnd).padStart(2, '0')}`;
+    const dueMonth = new Date(prev.getFullYear(), prev.getMonth() + 1, 1).toLocaleString('en-IN', { month: 'short', year: 'numeric' });
     const today = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
 
     notify(`Loading ${report}…`, 'warn');
@@ -115,26 +121,40 @@ ${rows.map((r, i) => `<tr><td>${i + 1}</td><td>${r.name}</td><td>${r.gstin}</td>
 </body></html>`);
 
       } else if (report === 'GSTR-1' || report === 'GSTR-3B') {
-        const salesResp = await (apiClient as any).getSalesOrders({ year, month: mon, limit: 500 }).catch(() => ({}));
-        const orders = Array.isArray(salesResp) ? salesResp : (salesResp as any).orders ?? [];
-        const taxable = orders.reduce((s: number, o: any) => s + Number(o.order_value || 0), 0);
-        const igst = taxable * 0.18;
+        // Granite blocks (HSN 2516) are 5% GST from 22 Sep 2025 (Notification 9/2025-CT(R)):
+        // CGST + SGST inside Tamil Nadu, IGST to other states, nil on exports under LUT.
+        const salesResp = await (apiClient as any).getSalesOrders({ fromDate, toDate, limit: 500 }).catch(() => ({}));
+        const all = Array.isArray(salesResp) ? salesResp : (salesResp as any).orders ?? [];
+        const orders = all.filter((o: any) => !['cancelled', 'CANCELLED', 'draft', 'DRAFT'].includes(o.status));
+        const rows = orders.map((o: any) => {
+          const taxable = Number(o.order_value || 0);
+          const rate = Number(o.gst_rate ?? 5);
+          const exp = !!o.is_export;
+          const inter = !exp && (o.customer_state ?? 'Tamil Nadu').toLowerCase() !== 'tamil nadu';
+          const tax = exp ? 0 : Math.round(taxable * rate) / 100;
+          return { o, taxable, rate, exp, igst: inter ? tax : 0, cgst: !exp && !inter ? tax / 2 : 0, sgst: !exp && !inter ? tax / 2 : 0 };
+        });
+        const sum = (k: 'taxable' | 'igst' | 'cgst' | 'sgst', f = (_: any) => true) =>
+          rows.filter(f).reduce((s: number, r: any) => s + r[k], 0);
+        const fmt = (n: number) => n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const domestic = (r: any) => !r.exp;
         openPrint(`<!DOCTYPE html><html><head><title>${report} — ${monthName}</title><style>${PRINT_CSS}</style></head><body>
 <h2>${report === 'GSTR-1' ? 'GSTR-1 — OUTWARD SUPPLIES RETURN' : 'GSTR-3B — MONTHLY SUMMARY RETURN'}</h2>
 <h3>Tax Period: ${monthName} | GSTIN: (as per org)</h3>
 <table class="meta"><tr><td><b>Return:</b></td><td>${report}</td><td><b>Date Generated:</b></td><td>${today}</td></tr>
-<tr><td><b>Due Date:</b></td><td>${report === 'GSTR-1' ? '11 Jun 2026' : '20 Jun 2026'}</td><td><b>Portal:</b></td><td>gstin.gov.in</td></tr></table>
-${report === 'GSTR-1' ? `<table><thead><tr><th>S.No</th><th>Order No</th><th>Customer</th><th>Date</th><th class="r">Taxable (₹)</th><th class="r">IGST 18% (₹)</th><th class="r">Total (₹)</th></tr></thead><tbody>
-${orders.slice(0, 50).map((o: any, i: number) => `<tr><td>${i + 1}</td><td>${o.order_no || '—'}</td><td>${o.customer_name || '—'}</td><td>${o.order_date || '—'}</td><td class="r">${Number(o.order_value || 0).toLocaleString('en-IN')}</td><td class="r">${(Number(o.order_value || 0) * 0.18).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td><td class="r">${(Number(o.order_value || 0) * 1.18).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td></tr>`).join('')}
-<tr class="tot"><td colspan="4" class="r">TOTAL</td><td class="r">${taxable.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td><td class="r">${igst.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td><td class="r">${(taxable + igst).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td></tr>
+<tr><td><b>Due Date:</b></td><td>${report === 'GSTR-1' ? '11' : '20'} ${dueMonth}</td><td><b>Portal:</b></td><td>www.gst.gov.in</td></tr></table>
+${report === 'GSTR-1' ? `<table><thead><tr><th>S.No</th><th>Order No</th><th>Customer</th><th>GSTIN</th><th>Date</th><th>HSN</th><th class="r">Taxable (₹)</th><th class="r">Rate</th><th class="r">IGST (₹)</th><th class="r">CGST (₹)</th><th class="r">SGST (₹)</th></tr></thead><tbody>
+${rows.map((r: any, i: number) => `<tr><td>${i + 1}</td><td>${r.o.order_no || '—'}</td><td>${r.o.customer_name || '—'}</td><td>${r.o.customer_gstin || 'URP'}</td><td>${r.o.order_date || '—'}</td><td>2516</td><td class="r">${fmt(r.taxable)}</td><td class="r">${r.exp ? 'LUT' : r.rate + '%'}</td><td class="r">${fmt(r.igst)}</td><td class="r">${fmt(r.cgst)}</td><td class="r">${fmt(r.sgst)}</td></tr>`).join('')}
+<tr class="tot"><td colspan="6" class="r">TOTAL</td><td class="r">${fmt(sum('taxable'))}</td><td></td><td class="r">${fmt(sum('igst'))}</td><td class="r">${fmt(sum('cgst'))}</td><td class="r">${fmt(sum('sgst'))}</td></tr>
 </tbody></table>` :
 `<table><thead><tr><th>Section</th><th>Description</th><th class="r">Taxable Value (₹)</th><th class="r">IGST (₹)</th><th class="r">CGST (₹)</th><th class="r">SGST (₹)</th></tr></thead><tbody>
-<tr><td>3.1(a)</td><td>Outward taxable supplies</td><td class="r">${taxable.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td><td class="r">${igst.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td><td class="r">0</td><td class="r">0</td></tr>
-<tr><td>4</td><td>ITC Available (input)</td><td class="r">—</td><td class="r">—</td><td class="r">—</td><td class="r">—</td></tr>
-<tr class="tot"><td colspan="2" class="r">Net Tax Payable</td><td class="r">${taxable.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td><td class="r">${igst.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td><td class="r">0</td><td class="r">0</td></tr>
+<tr><td>3.1(a)</td><td>Outward taxable supplies (other than zero-rated)</td><td class="r">${fmt(sum('taxable', domestic))}</td><td class="r">${fmt(sum('igst'))}</td><td class="r">${fmt(sum('cgst'))}</td><td class="r">${fmt(sum('sgst'))}</td></tr>
+<tr><td>3.1(b)</td><td>Zero-rated supplies (exports under LUT)</td><td class="r">${fmt(sum('taxable', (r: any) => r.exp))}</td><td class="r">0.00</td><td class="r">—</td><td class="r">—</td></tr>
+<tr><td>4</td><td>ITC Available (input) — from GSTR-2B</td><td class="r">—</td><td class="r">—</td><td class="r">—</td><td class="r">—</td></tr>
+<tr class="tot"><td colspan="2" class="r">Output tax before ITC</td><td class="r"></td><td class="r">${fmt(sum('igst'))}</td><td class="r">${fmt(sum('cgst'))}</td><td class="r">${fmt(sum('sgst'))}</td></tr>
 </tbody></table>`}
 <div class="sign"><div>Place: Dharmapuri, TN</div><div>Authorised Signatory<br/><br/>Name: ________________</div></div>
-<div class="note">This is a system-generated summary. File on GST portal: gstin.gov.in. ITC reconciliation with GSTR-2B required before filing GSTR-3B.</div>
+<div class="note">System-generated summary from sales orders for ${monthName}. Granite blocks HSN 2516 at 5% GST (Notification 9/2025-Central Tax (Rate), from 22 Sep 2025). File on www.gst.gov.in after reconciling ITC with GSTR-2B.</div>
 </body></html>`);
 
       } else if (report === 'PF ECR Return' || report === 'ESI Return' || report === 'TDS Return (26Q)') {

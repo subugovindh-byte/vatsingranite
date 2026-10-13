@@ -18,7 +18,8 @@ type ContentBlock =
   | { type: 'code';      text: string }
   | { type: 'warn';      text: string }
   | { type: 'tip';       text: string }
-  | { type: 'checklist'; items: string[] };
+  | { type: 'checklist'; items: string[] }
+  | { type: 'links';     items: { label: string; url: string; note?: string }[] };
 
 // ── Content ───────────────────────────────────────────────────────────────────
 
@@ -210,13 +211,25 @@ const SECTIONS: Section[] = [
         ['cancelled','Voided — no tax impact', 'Raise fresh invoice if needed'],
       ]},
       { type: 'h3', text: '4.3 HSN Codes & GST Rates — Granite' },
-      { type: 'table', headers: ['HSN', 'Description', 'GST Rate'], rows: [
-        ['2516',        'Granite blocks (rough quarried)',      '5%'],
-        ['6802',        'Dressed/cut granite slabs',           '12%'],
-        ['6802 9090',   'Polished granite tiles/slabs',        '18%'],
-        ['9901',        'Export — LUT/Bond',                   '0% (IGST exempt)'],
+      { type: 'table', headers: ['HSN', 'Description', 'GST Rate', 'Before 22 Sep 2025'], rows: [
+        ['2516',        'Granite blocks — crude, roughly trimmed or dressed', '5%',  '12%'],
+        ['2516 12 00',  'Granite other than blocks (sawn rough slabs)',        '18%', '18%'],
+        ['6802',        'Worked granite — polished slabs, tiles, cut-to-size', '18%', '18%'],
+        ['6801',        'Setts, kerbs, flagstones',                            '18%', '18%'],
+        ['2517',        'Chips, gravel, crushed stone',                        '5%',  '5%'],
+        ['Export',      'Blocks exported under LUT (zero-rated)',              '0% IGST', '0% IGST'],
       ]},
-      { type: 'tip', text: 'Most quarry-to-dealer block sales use HSN 2516 at 5% GST. Verify with your CA if selling cut or polished material.' },
+      { type: 'tip', text: 'Quarry block sales are HSN 2516 at 5% GST (Notification 9/2025-Central Tax (Rate), from 22 Sep 2025): CGST 2.5% + SGST 2.5% inside Tamil Nadu, IGST 5% to other states. The rate follows the HSN, not the price — a ₹50,000 / CBM block pays ₹2,500 GST.' },
+      { type: 'h4', text: 'Check a rate on the government portals' },
+      { type: 'links', items: [
+        { label: 'GST portal — HSN / SAC search', url: 'https://services.gst.gov.in/services/searchhsnsac', note: 'type 2516 to see the description and rate' },
+        { label: 'CBIC tax information portal — rate notifications', url: 'https://taxinformation.cbic.gov.in/' },
+        { label: 'Notification 9/2025-Integrated Tax (Rate) — current goods rates (PDF)', url: 'https://courier.cbic.gov.in/ECCS/advisory/2025/NOTIFICATION%20NO.%209_2025-INTEGRATED%20TAX%20(RATE)%20-1759486719.pdf', note: 'Schedule I = 5%, Schedule II = 18%' },
+        { label: 'GST portal — returns', url: 'https://www.gst.gov.in/' },
+        { label: 'e-Way Bill portal', url: 'https://ewaybillgst.gov.in/' },
+        { label: 'e-Invoice portal (IRN)', url: 'https://einvoice1.gst.gov.in/' },
+        { label: 'TRACES — TDS returns, Form 16A', url: 'https://www.tdscpc.gov.in/' },
+      ]},
       { type: 'h3', text: '4.4 Export Sales' },
       { type: 'p', text: 'Path: Trade → Export Sales' },
       { type: 'ul', items: [
@@ -625,6 +638,17 @@ function BlockRenderer({ block, q }: { block: ContentBlock; q: string }) {
     }}>
       <span style={{ fontWeight: 700, color: '#ef4444', marginRight: 6 }}>⚠ Warning:</span>{hl(block.text)}
     </div>
+  );
+
+  if (block.type === 'links') return (
+    <ul style={{ margin: '6px 0 12px', paddingLeft: 20, lineHeight: 1.7 }}>
+      {block.items.map((l, i) => (
+        <li key={i}>
+          <a href={l.url} target="_blank" rel="noopener noreferrer" style={{ color: '#3b82f6', fontWeight: 600 }}>{l.label} ↗</a>
+          {l.note && <span style={{ color: 'var(--t3)' }}> — {hl(l.note)}</span>}
+        </li>
+      ))}
+    </ul>
   );
 
   if (block.type === 'tip') return (
